@@ -41,21 +41,7 @@ class PaymentService {
     return PaymentResponse.fromJson(apiResponse.data!);
   }
 
-  /// Verify account name
-  ///
-  /// [accountNumber] - The account number to verify
-  /// [bankCode] - The bank code (e.g., '044' for Access Bank)
-  ///
-  /// Returns the account name if found
-  ///
-  /// Example:
-  /// ```dart
-  /// final accountName = await lenco.payments.verifyAccountName(
-  ///   accountNumber: '1234567890',
-  ///   bankCode: '044',
-  /// );
-  /// print('Account Name: $accountName');
-  /// ```
+  /// Verify account name before transfer
   Future<String> verifyAccountName({
     required String accountNumber,
     required String bankCode,
@@ -82,17 +68,7 @@ class PaymentService {
     return apiResponse.data!['accountName'] as String;
   }
 
-  /// Get all Nigerian banks
-  ///
-  /// Returns a list of all supported banks with their codes
-  ///
-  /// Example:
-  /// ```dart
-  /// final banks = await lenco.payments.getBanks();
-  /// for (var bank in banks) {
-  ///   print('${bank.name}: ${bank.code}');
-  /// }
-  /// ```
+  /// Get list of supported banks
   Future<List<Bank>> getBanks() async {
     final response = await _client.get('banks');
 
@@ -110,17 +86,7 @@ class PaymentService {
         .toList();
   }
 
-  /// Get payment status
-  ///
-  /// [reference] - The payment reference
-  ///
-  /// Example:
-  /// ```dart
-  /// final payment = await lenco.payments.getPaymentStatus(
-  ///   reference: 'PAY-REF-123',
-  /// );
-  /// print('Status: ${payment.status}');
-  /// ```
+  /// Check payment status by reference
   Future<PaymentResponse> getPaymentStatus({
     required String reference,
   }) async {
@@ -140,21 +106,7 @@ class PaymentService {
     return PaymentResponse.fromJson(apiResponse.data!);
   }
 
-  /// Initiate bulk transfer
-  ///
-  /// [accountId] - Source account ID
-  /// [transfers] - List of payment requests
-  ///
-  /// Example:
-  /// ```dart
-  /// final result = await lenco.payments.initiateBulkTransfer(
-  ///   accountId: 'account-id',
-  ///   transfers: [
-  ///     PaymentRequest(...),
-  ///     PaymentRequest(...),
-  ///   ],
-  /// );
-  /// ```
+  /// Transfer to multiple recipients at once
   Future<Map<String, dynamic>> initiateBulkTransfer({
     required String accountId,
     required List<PaymentRequest> transfers,
@@ -181,12 +133,7 @@ class PaymentService {
     return apiResponse.data!;
   }
 
-  /// Get transfer fee
-  ///
-  /// [amount] - Transfer amount
-  /// [bankCode] - Destination bank code
-  ///
-  /// Returns the calculated transfer fee
+  /// Calculate transfer fee
   Future<String> getTransferFee({
     required String amount,
     required String bankCode,

@@ -7,17 +7,7 @@ class AccountService {
 
   AccountService(this._client);
 
-  /// Get all accounts
-  ///
-  /// Returns a list of all accounts associated with the API key.
-  ///
-  /// Example:
-  /// ```dart
-  /// final accounts = await lenco.accounts.getAccounts();
-  /// for (var account in accounts) {
-  ///   print('${account.name}: ${account.currentBalance}');
-  /// }
-  /// ```
+  /// Get all accounts for this API key
   Future<List<LencoAccount>> getAccounts() async {
     final response = await _client.get('accounts');
 
@@ -35,15 +25,7 @@ class AccountService {
         .toList();
   }
 
-  /// Get a specific account by ID
-  ///
-  /// [accountId] - The unique identifier of the account
-  ///
-  /// Example:
-  /// ```dart
-  /// final account = await lenco.accounts.getAccountById('account-id');
-  /// print('Balance: ${account.availableBalance}');
-  /// ```
+  /// Get account by ID
   Future<LencoAccount> getAccountById(String accountId) async {
     final response = await _client.get('accounts/$accountId');
 
@@ -59,11 +41,7 @@ class AccountService {
     return LencoAccount.fromJson(apiResponse.data!);
   }
 
-  /// Get account balance
-  ///
-  /// [accountId] - The unique identifier of the account
-  ///
-  /// Returns a map with 'available' and 'current' balance
+  /// Get balance info for an account
   Future<Map<String, String>> getAccountBalance(String accountId) async {
     final account = await getAccountById(accountId);
     return {

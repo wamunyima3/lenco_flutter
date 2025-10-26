@@ -7,23 +7,7 @@ class TransactionService {
 
   TransactionService(this._client);
 
-  /// Get all transactions for an account
-  ///
-  /// [accountId] - The unique identifier of the account
-  /// [page] - Page number for pagination (default: 1)
-  /// [limit] - Number of transactions per page (default: 50)
-  /// [startDate] - Filter transactions from this date (ISO 8601 format)
-  /// [endDate] - Filter transactions until this date (ISO 8601 format)
-  /// [type] - Filter by transaction type (credit, debit)
-  ///
-  /// Example:
-  /// ```dart
-  /// final transactions = await lenco.transactions.getTransactions(
-  ///   accountId: 'account-id',
-  ///   limit: 20,
-  ///   type: 'credit',
-  /// );
-  /// ```
+  /// Get transactions with optional filters
   Future<List<LencoTransaction>> getTransactions({
     required String accountId,
     int page = 1,
@@ -59,18 +43,7 @@ class TransactionService {
         .toList();
   }
 
-  /// Get a specific transaction by ID
-  ///
-  /// [accountId] - The unique identifier of the account
-  /// [transactionId] - The unique identifier of the transaction
-  ///
-  /// Example:
-  /// ```dart
-  /// final transaction = await lenco.transactions.getTransactionById(
-  ///   accountId: 'account-id',
-  ///   transactionId: 'txn-id',
-  /// );
-  /// ```
+  /// Get transaction by ID
   Future<LencoTransaction> getTransactionById({
     required String accountId,
     required String transactionId,
@@ -91,16 +64,7 @@ class TransactionService {
     return LencoTransaction.fromJson(apiResponse.data!);
   }
 
-  /// Get transaction by reference
-  ///
-  /// [reference] - The transaction reference
-  ///
-  /// Example:
-  /// ```dart
-  /// final transaction = await lenco.transactions.getTransactionByReference(
-  ///   reference: 'TXN-REF-123',
-  /// );
-  /// ```
+  /// Get transaction by reference number
   Future<LencoTransaction> getTransactionByReference({
     required String reference,
   }) async {
@@ -120,14 +84,7 @@ class TransactionService {
     return LencoTransaction.fromJson(apiResponse.data!);
   }
 
-  /// Download transaction statement
-  ///
-  /// [accountId] - The unique identifier of the account
-  /// [startDate] - Start date for statement (ISO 8601 format)
-  /// [endDate] - End date for statement (ISO 8601 format)
-  /// [format] - Format of the statement (pdf, csv, xlsx)
-  ///
-  /// Returns the URL to download the statement
+  /// Download statement in specified format
   Future<String> downloadStatement({
     required String accountId,
     required String startDate,

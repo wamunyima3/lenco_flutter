@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:lenco_flutter/src/config/lenco_config.dart';
 import 'package:lenco_flutter/src/exceptions/lenco_exception.dart';
 
-/// HTTP client for making requests to Lenco API
+/// HTTP client wrapper for Lenco API
 class LencoHttpClient {
   final LencoConfig config;
   final http.Client _client;
@@ -22,7 +22,7 @@ class LencoHttpClient {
         'Accept': 'application/json',
       };
 
-  /// Make GET request
+  /// GET request
   Future<Map<String, dynamic>> get(
     String endpoint, {
     Map<String, dynamic>? queryParameters,
@@ -34,7 +34,7 @@ class LencoHttpClient {
     );
   }
 
-  /// Make POST request
+  /// POST request
   Future<Map<String, dynamic>> post(
     String endpoint, {
     Map<String, dynamic>? body,
