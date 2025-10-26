@@ -1,0 +1,7 @@
+build/
+coverage/
+*.g.dart
+*.freezed.dart
+*.mocks.dart
+*.iml
+
