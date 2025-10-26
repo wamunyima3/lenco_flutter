@@ -5,6 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2025-01-XX
+
+### Added
+
+- **Collections Service** - Accept payments from customers
+  - Card payment collections
+  - Mobile money collections
+  - OTP submission for mobile money
+  - Collection status tracking
+- **Virtual Accounts Service** - Receive payments via dedicated accounts
+  - Create virtual accounts
+  - Get virtual accounts by reference or BVN
+  - Fetch virtual account transactions
+  - Get rejected transactions
+- **Recipient Service** - Manage payment recipients
+  - Create recipients
+  - Get all recipients
+  - Get recipient by ID
+- **Settlements Service** - Track payouts and settlements
+  - Get all settlements
+  - Filter settlements by status
+  - Get settlement by ID
+- **New Models**
+  - `VirtualAccount` - Virtual account data model
+  - `CollectionRequest` & `CollectionResponse` - Collection models
+  - `Recipient` - Recipient model
+  - `Settlement` - Settlement model
+  - `WebhookEvent` - Webhook event model
+
+### Changed
+
+- Updated `LencoClient` to include 4 new services
+- Enhanced package to be a complete payment gateway (accept + send payments)
+- Updated README with new feature examples
+
+### Notes
+
+This is a major version upgrade that transforms the package from a "send money" tool to a complete payment gateway with both acceptance and disbursement capabilities.
+
 ## [1.0.0] - 2025-10-31
 
 ### Added
@@ -66,9 +105,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Planned Features
 
-- Webhook support
-- Mobile money integration
-- Enhanced error recovery
+- Point of Sale (POS) support
+- Bill payments integration
+- Enhanced webhook management
 - Performance optimizations
 - Additional payment methods
-- Real-time transaction updates

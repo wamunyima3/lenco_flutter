@@ -3,6 +3,10 @@ import 'package:lenco_flutter/src/config/lenco_config.dart';
 import 'package:lenco_flutter/src/services/account_service.dart';
 import 'package:lenco_flutter/src/services/transaction_service.dart';
 import 'package:lenco_flutter/src/services/payment_service.dart';
+import 'package:lenco_flutter/src/services/collections_service.dart';
+import 'package:lenco_flutter/src/services/virtual_account_service.dart';
+import 'package:lenco_flutter/src/services/recipient_service.dart';
+import 'package:lenco_flutter/src/services/settlements_service.dart';
 import 'package:lenco_flutter/src/client/http_client.dart';
 
 /// Main Lenco API client
@@ -16,7 +20,10 @@ import 'package:lenco_flutter/src/client/http_client.dart';
 /// // Get accounts
 /// final accounts = await lenco.accounts.getAccounts();
 ///
-/// // Make payment
+/// // Accept payment
+/// final collection = await lenco.collections.createCardCollection(request);
+///
+/// // Send payment
 /// final payment = await lenco.payments.initiatePayment(request);
 /// ```
 class LencoClient {
@@ -26,6 +33,10 @@ class LencoClient {
   late final AccountService accounts;
   late final TransactionService transactions;
   late final PaymentService payments;
+  late final CollectionsService collections;
+  late final VirtualAccountService virtualAccounts;
+  late final RecipientService recipients;
+  late final SettlementsService settlements;
 
   LencoClient({
     required this.config,
@@ -38,6 +49,10 @@ class LencoClient {
     accounts = AccountService(_httpClient);
     transactions = TransactionService(_httpClient);
     payments = PaymentService(_httpClient);
+    collections = CollectionsService(_httpClient);
+    virtualAccounts = VirtualAccountService(_httpClient);
+    recipients = RecipientService(_httpClient);
+    settlements = SettlementsService(_httpClient);
   }
 
   factory LencoClient.production({

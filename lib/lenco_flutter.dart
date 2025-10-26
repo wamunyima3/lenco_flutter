@@ -3,8 +3,11 @@
 /// This package provides easy-to-use APIs for:
 /// - Account management
 /// - Transaction history
-/// - Bank transfers and payments
-/// - Mobile money operations
+/// - Accept payments (collections, cards, mobile money)
+/// - Send payments (transfers)
+/// - Virtual accounts for receiving funds
+/// - Recipient management
+/// - Settlement tracking
 /// - Account verification
 ///
 /// ## Getting Started
@@ -67,6 +70,38 @@
 ///   type: 'credit',
 /// );
 /// ```
+///
+/// ### Accept Payment (Collection)
+/// ```dart
+/// try {
+///   final collection = await lenco.collections.createCardCollection(
+///     CollectionRequest(
+///       amount: '10000',
+///       currency: 'NGN',
+///       reference: 'ORDER-123',
+///     ),
+///     cardNumber: '4532015112830366',
+///     expiryMonth: '12',
+///     expiryYear: '25',
+///     cvv: '123',
+///   );
+///   print('Collection created: ${collection.reference}');
+/// } on LencoException catch (e) {
+///   print('Error: ${e.message}');
+/// }
+/// ```
+///
+/// ### Create Virtual Account
+/// ```dart
+/// try {
+///   final virtualAccount = await lenco.virtualAccounts.createVirtualAccount(
+///     accountName: 'John Doe',
+///   );
+///   print('Virtual Account: ${virtualAccount.accountNumber}');
+/// } on LencoException catch (e) {
+///   print('Error: ${e.message}');
+/// }
+/// ```
 library lenco_flutter;
 
 // Core client
@@ -86,3 +121,7 @@ export 'src/exceptions/lenco_exception.dart';
 export 'src/services/account_service.dart';
 export 'src/services/transaction_service.dart';
 export 'src/services/payment_service.dart';
+export 'src/services/collections_service.dart';
+export 'src/services/virtual_account_service.dart';
+export 'src/services/recipient_service.dart';
+export 'src/services/settlements_service.dart';

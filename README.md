@@ -10,6 +10,10 @@ A production-ready Flutter package for integrating Lenco payment gateway. This p
 ## Features
 
 ✅ **Account Management** - Get accounts, balances, and account details  
+✅ **Accept Payments** - Collections (card, mobile money) - NEW!  
+✅ **Virtual Accounts** - Receive payments via dedicated accounts - NEW!  
+✅ **Recipient Management** - Save and manage payment recipients - NEW!  
+✅ **Settlements** - Track payouts and settlements - NEW!  
 ✅ **Transaction History** - Fetch and filter transactions with pagination  
 ✅ **Bank Transfers** - Initiate single and bulk transfers  
 ✅ **Account Verification** - Verify account names before transfers  
@@ -258,6 +262,132 @@ try {
   );
 
   print('Download statement from: $downloadUrl');
+} on LencoException catch (e) {
+  print('Error: ${e.message}');
+}
+```
+
+### Accept Payment (Collections) - NEW!
+
+Accept payments from cards or mobile money:
+
+```dart
+try {
+  // Accept card payment
+  final collection = await lenco.collections.createCardCollection(
+    CollectionRequest(
+      amount: '10000',
+      currency: 'NGN',
+      reference: 'ORDER-123',
+      callbackUrl: 'https://yourapp.com/callback',
+    ),
+    cardNumber: '4532015112830366',
+    expiryMonth: '12',
+    expiryYear: '25',
+    cvv: '123',
+  );
+
+  print('Payment authorized: ${collection.authorizationUrl}');
+  print('Status: ${collection.status}');
+} on LencoException catch (e) {
+  print('Error: ${e.message}');
+}
+```
+
+Or accept mobile money:
+
+```dart
+try {
+  final collection = await lenco.collections.createMobileMoneyCollection(
+    CollectionRequest(
+      amount: '10000',
+      currency: 'NGN',
+      reference: 'ORDER-456',
+    ),
+    phoneNumber: '08012345678',
+    provider: 'MTN',
+  );
+
+  // Submit OTP if required
+  final result = await lenco.collections.submitMobileMoneyOtp(
+    collectionId: collection.id,
+    otp: '123456',
+  );
+
+  print('Payment status: ${result.status}');
+} on LencoException catch (e) {
+  print('Error: ${e.message}');
+}
+```
+
+### Create Virtual Account - NEW!
+
+Create a virtual account for receiving payments:
+
+```dart
+try {
+  final virtualAccount = await lenco.virtualAccounts.createVirtualAccount(
+    accountName: 'John Doe',
+    bvn: '12345678901', // Optional
+  );
+
+  print('Virtual Account: ${virtualAccount.accountNumber}');
+  print('Account Name: ${virtualAccount.accountName}');
+  print('Bank: ${virtualAccount.bank.name}');
+  print('Reference: ${virtualAccount.accountReference}');
+
+  // Get virtual account transactions
+  final transactions = await lenco.virtualAccounts.getTransactions(
+    accountReference: virtualAccount.accountReference,
+  );
+} on LencoException catch (e) {
+  print('Error: ${e.message}');
+}
+```
+
+### Manage Recipients - NEW!
+
+Save and reuse payment recipients:
+
+```dart
+try {
+  // Create a recipient
+  final recipient = await lenco.recipients.createRecipient(
+    accountName: 'John Doe',
+    accountNumber: '1234567890',
+    bankCode: '044',
+  );
+
+  print('Recipient created: ${recipient.name}');
+
+  // Get all recipients
+  final recipients = await lenco.recipients.getRecipients();
+
+  for (var recipient in recipients) {
+    print('${recipient.name} - ${recipient.accountNumber}');
+  }
+} on LencoException catch (e) {
+  print('Error: ${e.message}');
+}
+```
+
+### Track Settlements - NEW!
+
+Monitor your settlement history:
+
+```dart
+try {
+  final settlements = await lenco.settlements.getSettlements(
+    page: 1,
+    limit: 20,
+    status: 'completed', // Optional filter
+  );
+
+  for (var settlement in settlements) {
+    print('Amount: ${settlement.amount} ${settlement.currency}');
+    print('Status: ${settlement.status}');
+    print('Date: ${settlement.createdAt}');
+  }
 } on LencoException catch (e) {
   print('Error: ${e.message}');
 }

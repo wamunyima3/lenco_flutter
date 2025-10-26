@@ -228,3 +228,192 @@ class PaymentResponse extends Equatable {
 
   Map<String, dynamic> toJson() => _$PaymentResponseToJson(this);
 }
+
+/// Virtual Account model (v1)
+@JsonSerializable()
+class VirtualAccount extends Equatable {
+  final String accountReference;
+  final String accountName;
+  final String accountNumber;
+  final Bank bank;
+  final String status;
+  final String? bvn;
+  final DateTime createdAt;
+
+  const VirtualAccount({
+    required this.accountReference,
+    required this.accountName,
+    required this.accountNumber,
+    required this.bank,
+    required this.status,
+    required this.createdAt,
+    this.bvn,
+  });
+
+  factory VirtualAccount.fromJson(Map<String, dynamic> json) =>
+      _$VirtualAccountFromJson(json);
+
+  @override
+  List<Object?> get props => [
+        accountReference,
+        accountName,
+        accountNumber,
+        bank,
+        status,
+        bvn,
+        createdAt
+      ];
+
+  Map<String, dynamic> toJson() => _$VirtualAccountToJson(this);
+}
+
+/// Collection request (v2)
+@JsonSerializable()
+class CollectionRequest extends Equatable {
+  final String amount;
+  final String currency;
+  final String reference;
+  final String? callbackUrl;
+  final String? metadata;
+
+  const CollectionRequest({
+    required this.amount,
+    required this.currency,
+    required this.reference,
+    this.callbackUrl,
+    this.metadata,
+  });
+
+  factory CollectionRequest.fromJson(Map<String, dynamic> json) =>
+      _$CollectionRequestFromJson(json);
+
+  @override
+  List<Object?> get props =>
+      [amount, currency, reference, callbackUrl, metadata];
+
+  Map<String, dynamic> toJson() => _$CollectionRequestToJson(this);
+}
+
+/// Collection response (v2)
+@JsonSerializable()
+class CollectionResponse extends Equatable {
+  final String id;
+  final String reference;
+  final String status;
+  final String amount;
+  final String currency;
+  final DateTime createdAt;
+  final String? authorizationUrl;
+  final Map<String, dynamic>? metadata;
+
+  const CollectionResponse({
+    required this.id,
+    required this.reference,
+    required this.status,
+    required this.amount,
+    required this.currency,
+    required this.createdAt,
+    this.authorizationUrl,
+    this.metadata,
+  });
+
+  factory CollectionResponse.fromJson(Map<String, dynamic> json) =>
+      _$CollectionResponseFromJson(json);
+
+  @override
+  List<Object?> get props => [
+        id,
+        reference,
+        status,
+        amount,
+        currency,
+        createdAt,
+        authorizationUrl,
+        metadata
+      ];
+
+  Map<String, dynamic> toJson() => _$CollectionResponseToJson(this);
+}
+
+/// Recipient model
+@JsonSerializable()
+class Recipient extends Equatable {
+  final String id;
+  final String name;
+  final String accountNumber;
+  final Bank bank;
+  final String type;
+  final DateTime createdAt;
+
+  const Recipient({
+    required this.id,
+    required this.name,
+    required this.accountNumber,
+    required this.bank,
+    required this.type,
+    required this.createdAt,
+  });
+
+  factory Recipient.fromJson(Map<String, dynamic> json) =>
+      _$RecipientFromJson(json);
+
+  @override
+  List<Object?> get props => [id, name, accountNumber, bank, type, createdAt];
+
+  Map<String, dynamic> toJson() => _$RecipientToJson(this);
+}
+
+/// Settlement model (v2)
+@JsonSerializable()
+class Settlement extends Equatable {
+  final String id;
+  final String amount;
+  final String currency;
+  final String status;
+  final String? reference;
+  final DateTime createdAt;
+  final DateTime? settledAt;
+
+  const Settlement({
+    required this.id,
+    required this.amount,
+    required this.currency,
+    required this.status,
+    required this.createdAt,
+    this.reference,
+    this.settledAt,
+  });
+
+  factory Settlement.fromJson(Map<String, dynamic> json) =>
+      _$SettlementFromJson(json);
+
+  @override
+  List<Object?> get props =>
+      [id, amount, currency, status, reference, createdAt, settledAt];
+
+  Map<String, dynamic> toJson() => _$SettlementToJson(this);
+}
+
+/// Webhook event model
+@JsonSerializable()
+class WebhookEvent extends Equatable {
+  final String event;
+  final String id;
+  final Map<String, dynamic> data;
+  final DateTime createdAt;
+
+  const WebhookEvent({
+    required this.event,
+    required this.id,
+    required this.data,
+    required this.createdAt,
+  });
+
+  factory WebhookEvent.fromJson(Map<String, dynamic> json) =>
+      _$WebhookEventFromJson(json);
+
+  @override
+  List<Object?> get props => [event, id, data, createdAt];
+
+  Map<String, dynamic> toJson() => _$WebhookEventToJson(this);
+}
