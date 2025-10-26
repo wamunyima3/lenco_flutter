@@ -140,7 +140,7 @@ void main() {
     });
 
     test('PaymentRequest should serialize/deserialize correctly', () {
-      final request = PaymentRequest(
+      const request = PaymentRequest(
         accountId: 'acc-123',
         amount: '10000',
         recipientAccountNumber: '1234567890',
@@ -595,7 +595,7 @@ void main() {
     });
 
     test('should initiate payment successfully', () async {
-      final paymentRequest = PaymentRequest(
+      const paymentRequest = PaymentRequest(
         accountId: 'acc-1',
         amount: '10000',
         recipientAccountNumber: '1234567890',
@@ -696,7 +696,7 @@ void main() {
     });
 
     test('should initiate bulk transfer successfully', () async {
-      final transfers = [
+      const transfers = [
         PaymentRequest(
           accountId: 'acc-1',
           amount: '5000',
@@ -833,7 +833,7 @@ void main() {
       expect(accountName, 'John Doe');
 
       // Initiate payment
-      final paymentRequest = PaymentRequest(
+      const paymentRequest = PaymentRequest(
         accountId: 'acc-1',
         amount: '10000',
         recipientAccountNumber: '1234567890',

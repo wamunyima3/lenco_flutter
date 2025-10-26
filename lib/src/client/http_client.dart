@@ -74,6 +74,14 @@ class LencoHttpClient {
     );
   }
 
+  /// Debug logging helper
+  void _debugLog(String message) {
+    if (config.debugMode) {
+      // ignore: avoid_print
+      print('[Lenco] $message');
+    }
+  }
+
   /// Core request method
   Future<Map<String, dynamic>> _makeRequest({
     required String method,
@@ -84,8 +92,8 @@ class LencoHttpClient {
     final uri = _buildUri(endpoint, queryParameters);
 
     if (config.debugMode) {
-      print('[Lenco] $method $uri');
-      if (body != null) print('[Lenco] Body: ${jsonEncode(body)}');
+      _debugLog('$method $uri');
+      if (body != null) _debugLog('Body: ${jsonEncode(body)}');
     }
 
     try {
@@ -124,8 +132,8 @@ class LencoHttpClient {
       }
 
       if (config.debugMode) {
-        print('[Lenco] Response: ${response.statusCode}');
-        print('[Lenco] Body: ${response.body}');
+        _debugLog('Response: ${response.statusCode}');
+        _debugLog('Body: ${response.body}');
       }
 
       return _handleResponse(response);

@@ -40,7 +40,6 @@ class LencoClient {
     payments = PaymentService(_httpClient);
   }
 
-  /// Create a production client
   factory LencoClient.production({
     required String apiKey,
     LencoApiVersion version = LencoApiVersion.v1,
@@ -53,7 +52,6 @@ class LencoClient {
     );
   }
 
-  /// Create a sandbox client for testing
   factory LencoClient.sandbox({
     required String apiKey,
     LencoApiVersion version = LencoApiVersion.v1,

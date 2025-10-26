@@ -26,14 +26,10 @@ class LencoException implements Exception {
 /// Authentication error (401)
 class LencoAuthenticationException extends LencoException {
   const LencoAuthenticationException({
-    String message = 'Authentication failed. Check your API key.',
-    int statusCode = 401,
-    String? errorCode,
-  }) : super(
-          message: message,
-          statusCode: statusCode,
-          errorCode: errorCode,
-        );
+    super.message = 'Authentication failed. Check your API key.',
+    super.statusCode = 401,
+    super.errorCode,
+  });
 }
 
 /// Validation error (400)
@@ -41,15 +37,11 @@ class LencoValidationException extends LencoException {
   final Map<String, dynamic>? errors;
 
   const LencoValidationException({
-    String message = 'Validation error occurred.',
-    int statusCode = 400,
-    String? errorCode,
+    super.message = 'Validation error occurred.',
+    super.statusCode = 400,
+    super.errorCode,
     this.errors,
-  }) : super(
-          message: message,
-          statusCode: statusCode,
-          errorCode: errorCode,
-        );
+  });
 
   @override
   String toString() {
@@ -64,60 +56,42 @@ class LencoValidationException extends LencoException {
 /// Resource not found error (404)
 class LencoNotFoundException extends LencoException {
   const LencoNotFoundException({
-    String message = 'Resource not found.',
-    int statusCode = 404,
-    String? errorCode,
-  }) : super(
-          message: message,
-          statusCode: statusCode,
-          errorCode: errorCode,
-        );
+    super.message = 'Resource not found.',
+    super.statusCode = 404,
+    super.errorCode,
+  });
 }
 
 /// Server error (500+)
 class LencoServerException extends LencoException {
   const LencoServerException({
-    String message = 'Server error occurred. Please try again later.',
-    int? statusCode,
-    String? errorCode,
-  }) : super(
-          message: message,
-          statusCode: statusCode,
-          errorCode: errorCode,
-        );
+    super.message = 'Server error occurred. Please try again later.',
+    super.statusCode,
+    super.errorCode,
+  });
 }
 
 /// Network error (timeout, no connection)
 class LencoNetworkException extends LencoException {
   const LencoNetworkException({
-    String message = 'Network error. Check your connection.',
-    dynamic originalError,
-  }) : super(
-          message: message,
-          originalError: originalError,
-        );
+    super.message = 'Network error. Check your connection.',
+    super.originalError,
+  });
 }
 
 /// Rate limit exceeded
 class LencoRateLimitException extends LencoException {
   const LencoRateLimitException({
-    String message = 'Rate limit exceeded. Please try again later.',
-    int statusCode = 429,
-  }) : super(
-          message: message,
-          statusCode: statusCode,
-        );
+    super.message = 'Rate limit exceeded. Please try again later.',
+    super.statusCode = 429,
+  });
 }
 
 /// Unknown error
 class LencoUnknownException extends LencoException {
   const LencoUnknownException({
-    String message = 'An unknown error occurred.',
-    dynamic originalError,
-    StackTrace? stackTrace,
-  }) : super(
-          message: message,
-          originalError: originalError,
-          stackTrace: stackTrace,
-        );
+    super.message = 'An unknown error occurred.',
+    super.originalError,
+    super.stackTrace,
+  });
 }

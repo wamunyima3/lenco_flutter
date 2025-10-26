@@ -23,7 +23,6 @@ class LencoConfig {
     this.debugMode = false,
   });
 
-  /// Create config for sandbox environment
   factory LencoConfig.sandbox({
     required String apiKey,
     LencoApiVersion version = LencoApiVersion.v1,
@@ -37,7 +36,6 @@ class LencoConfig {
     );
   }
 
-  /// Create config for production environment
   factory LencoConfig.production({
     required String apiKey,
     LencoApiVersion version = LencoApiVersion.v1,
