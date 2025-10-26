@@ -3,7 +3,7 @@ import 'package:lenco_flutter/src/config/lenco_config.dart';
 import 'package:lenco_flutter/src/services/account_service.dart';
 import 'package:lenco_flutter/src/services/transaction_service.dart';
 import 'package:lenco_flutter/src/services/payment_service.dart';
-import 'http_client.dart';
+import 'package:lenco_flutter/src/client/http_client.dart';
 
 /// Main Lenco API client
 ///
