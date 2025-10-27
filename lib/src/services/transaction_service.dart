@@ -68,9 +68,7 @@ class TransactionService {
   Future<LencoTransaction> getTransactionByReference({
     required String reference,
   }) async {
-    final response = await _client.get(
-      'transactions/reference/$reference',
-    );
+    final response = await _client.get('transactions/reference/$reference');
 
     final apiResponse = LencoApiResponse<Map<String, dynamic>>.fromJson(
       response,

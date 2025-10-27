@@ -20,15 +20,9 @@ class VirtualAccountService {
     required String accountName,
     String? bvn,
   }) async {
-    final body = {
-      'accountName': accountName,
-      if (bvn != null) 'bvn': bvn,
-    };
+    final body = {'accountName': accountName, if (bvn != null) 'bvn': bvn};
 
-    final response = await _client.post(
-      'virtual-accounts',
-      body: body,
-    );
+    final response = await _client.post('virtual-accounts', body: body);
 
     final apiResponse = LencoApiResponse<Map<String, dynamic>>.fromJson(
       response,
@@ -189,7 +183,8 @@ class VirtualAccountService {
 
   /// Get rejected transaction by ID
   Future<LencoTransaction> getRejectedTransactionById(
-      String transactionId) async {
+    String transactionId,
+  ) async {
     final response = await _client.get(
       'virtual-accounts/rejected-transactions/$transactionId',
     );
@@ -211,10 +206,7 @@ class VirtualAccountService {
     int page = 1,
     int limit = 50,
   }) async {
-    final queryParams = {
-      'page': page,
-      'limit': limit,
-    };
+    final queryParams = {'page': page, 'limit': limit};
 
     final response = await _client.get(
       'virtual-accounts/all-transactions',

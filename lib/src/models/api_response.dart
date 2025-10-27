@@ -23,8 +23,7 @@ class LencoApiResponse<T> extends Equatable {
   factory LencoApiResponse.fromJson(
     Map<String, dynamic> json,
     T Function(Object? json) fromJsonT,
-  ) =>
-      _$LencoApiResponseFromJson(json, fromJsonT);
+  ) => _$LencoApiResponseFromJson(json, fromJsonT);
 
   @override
   List<Object?> get props => [status, message, data, errorCode, errors];
@@ -63,16 +62,16 @@ class LencoAccount extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        bankAccount,
-        type,
-        status,
-        availableBalance,
-        currentBalance,
-        createdAt,
-        currency,
-      ];
+    id,
+    name,
+    bankAccount,
+    type,
+    status,
+    availableBalance,
+    currentBalance,
+    createdAt,
+    currency,
+  ];
 
   Map<String, dynamic> toJson() => _$LencoAccountToJson(this);
 }
@@ -105,10 +104,7 @@ class Bank extends Equatable {
   final String code;
   final String name;
 
-  const Bank({
-    required this.code,
-    required this.name,
-  });
+  const Bank({required this.code, required this.name});
 
   factory Bank.fromJson(Map<String, dynamic> json) => _$BankFromJson(json);
 
@@ -152,18 +148,18 @@ class LencoTransaction extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        reference,
-        type,
-        amount,
-        currency,
-        status,
-        description,
-        createdAt,
-        completedAt,
-        recipientName,
-        recipientAccount,
-      ];
+    id,
+    reference,
+    type,
+    amount,
+    currency,
+    status,
+    description,
+    createdAt,
+    completedAt,
+    recipientName,
+    recipientAccount,
+  ];
 
   Map<String, dynamic> toJson() => _$LencoTransactionToJson(this);
 }
@@ -192,13 +188,13 @@ class PaymentRequest extends Equatable {
 
   @override
   List<Object?> get props => [
-        accountId,
-        amount,
-        recipientAccountNumber,
-        recipientBankCode,
-        narration,
-        reference,
-      ];
+    accountId,
+    amount,
+    recipientAccountNumber,
+    recipientBankCode,
+    narration,
+    reference,
+  ];
 
   Map<String, dynamic> toJson() => _$PaymentRequestToJson(this);
 }
@@ -255,14 +251,14 @@ class VirtualAccount extends Equatable {
 
   @override
   List<Object?> get props => [
-        accountReference,
-        accountName,
-        accountNumber,
-        bank,
-        status,
-        bvn,
-        createdAt
-      ];
+    accountReference,
+    accountName,
+    accountNumber,
+    bank,
+    status,
+    bvn,
+    createdAt,
+  ];
 
   Map<String, dynamic> toJson() => _$VirtualAccountToJson(this);
 }
@@ -288,8 +284,13 @@ class CollectionRequest extends Equatable {
       _$CollectionRequestFromJson(json);
 
   @override
-  List<Object?> get props =>
-      [amount, currency, reference, callbackUrl, metadata];
+  List<Object?> get props => [
+    amount,
+    currency,
+    reference,
+    callbackUrl,
+    metadata,
+  ];
 
   Map<String, dynamic> toJson() => _$CollectionRequestToJson(this);
 }
@@ -322,15 +323,15 @@ class CollectionResponse extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        reference,
-        status,
-        amount,
-        currency,
-        createdAt,
-        authorizationUrl,
-        metadata
-      ];
+    id,
+    reference,
+    status,
+    amount,
+    currency,
+    createdAt,
+    authorizationUrl,
+    metadata,
+  ];
 
   Map<String, dynamic> toJson() => _$CollectionResponseToJson(this);
 }
@@ -388,8 +389,15 @@ class Settlement extends Equatable {
       _$SettlementFromJson(json);
 
   @override
-  List<Object?> get props =>
-      [id, amount, currency, status, reference, createdAt, settledAt];
+  List<Object?> get props => [
+    id,
+    amount,
+    currency,
+    status,
+    reference,
+    createdAt,
+    settledAt,
+  ];
 
   Map<String, dynamic> toJson() => _$SettlementToJson(this);
 }

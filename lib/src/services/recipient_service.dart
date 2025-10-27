@@ -67,10 +67,7 @@ class RecipientService {
       'bankCode': bankCode,
     };
 
-    final response = await _client.post(
-      'recipients',
-      body: body,
-    );
+    final response = await _client.post('recipients', body: body);
 
     final apiResponse = LencoApiResponse<Map<String, dynamic>>.fromJson(
       response,

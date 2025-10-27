@@ -38,13 +38,8 @@ class LencoClient {
   late final RecipientService recipients;
   late final SettlementsService settlements;
 
-  LencoClient({
-    required this.config,
-    http.Client? httpClient,
-  }) : _httpClient = LencoHttpClient(
-          config: config,
-          client: httpClient,
-        ) {
+  LencoClient({required this.config, http.Client? httpClient})
+    : _httpClient = LencoHttpClient(config: config, client: httpClient) {
     // Initialize services
     accounts = AccountService(_httpClient);
     transactions = TransactionService(_httpClient);
@@ -60,10 +55,7 @@ class LencoClient {
     LencoApiVersion version = LencoApiVersion.v1,
   }) {
     return LencoClient(
-      config: LencoConfig.production(
-        apiKey: apiKey,
-        version: version,
-      ),
+      config: LencoConfig.production(apiKey: apiKey, version: version),
     );
   }
 
@@ -72,10 +64,7 @@ class LencoClient {
     LencoApiVersion version = LencoApiVersion.v1,
   }) {
     return LencoClient(
-      config: LencoConfig.sandbox(
-        apiKey: apiKey,
-        version: version,
-      ),
+      config: LencoConfig.sandbox(apiKey: apiKey, version: version),
     );
   }
 

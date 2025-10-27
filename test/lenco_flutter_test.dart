@@ -65,7 +65,7 @@ void main() {
 
     test('should create validation exception with errors', () {
       const errors = {
-        'field': ['error message']
+        'field': ['error message'],
       };
       const exception = LencoValidationException(errors: errors);
 
@@ -94,14 +94,14 @@ void main() {
         'bankAccount': {
           'accountName': 'John Doe',
           'accountNumber': '1234567890',
-          'bank': {'code': '044', 'name': 'Access Bank'}
+          'bank': {'code': '044', 'name': 'Access Bank'},
         },
         'type': 'business',
         'status': 'active',
         'availableBalance': '10000.00',
         'currentBalance': '10000.00',
         'createdAt': '2023-01-01T00:00:00Z',
-        'currency': 'NGN'
+        'currency': 'NGN',
       };
 
       final account = LencoAccount.fromJson(accountJson);
@@ -126,7 +126,7 @@ void main() {
         'createdAt': '2023-01-01T00:00:00Z',
         'completedAt': '2023-01-01T00:01:00Z',
         'recipientName': 'Jane Doe',
-        'recipientAccount': '0987654321'
+        'recipientAccount': '0987654321',
       };
 
       final transaction = LencoTransaction.fromJson(transactionJson);
@@ -163,7 +163,7 @@ void main() {
         'reference': 'PAY-REF-123',
         'status': 'pending',
         'amount': '10000',
-        'message': 'Payment initiated successfully'
+        'message': 'Payment initiated successfully',
       };
 
       final response = PaymentResponse.fromJson(responseJson);
@@ -181,7 +181,7 @@ void main() {
         'message': 'Success',
         'data': {'id': 'test-id', 'name': 'Test'},
         'errorCode': null,
-        'errors': null
+        'errors': null,
       };
 
       final response = LencoApiResponse<Map<String, dynamic>>.fromJson(
@@ -207,15 +207,16 @@ void main() {
     });
 
     test('should make GET request successfully', () async {
-      when(mockClient.get(any, headers: anyNamed('headers')))
-          .thenAnswer((_) async => http.Response(
-                jsonEncode(<String, dynamic>{
-                  'status': true,
-                  'message': 'Success',
-                  'data': <String, dynamic>{}
-                }),
-                200,
-              ));
+      when(mockClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+        (_) async => http.Response(
+          jsonEncode(<String, dynamic>{
+            'status': true,
+            'message': 'Success',
+            'data': <String, dynamic>{},
+          }),
+          200,
+        ),
+      );
 
       final result = await httpClient.get('test-endpoint');
 
@@ -225,16 +226,22 @@ void main() {
     });
 
     test('should make POST request successfully', () async {
-      when(mockClient.post(any,
-              headers: anyNamed('headers'), body: anyNamed('body')))
-          .thenAnswer((_) async => http.Response(
-                jsonEncode(<String, dynamic>{
-                  'status': true,
-                  'message': 'Success',
-                  'data': <String, dynamic>{}
-                }),
-                201,
-              ));
+      when(
+        mockClient.post(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        ),
+      ).thenAnswer(
+        (_) async => http.Response(
+          jsonEncode(<String, dynamic>{
+            'status': true,
+            'message': 'Success',
+            'data': <String, dynamic>{},
+          }),
+          201,
+        ),
+      );
 
       final result = await httpClient.post(
         'test-endpoint',
@@ -242,17 +249,22 @@ void main() {
       );
 
       expect(result['status'], true);
-      verify(mockClient.post(any,
-              headers: anyNamed('headers'), body: anyNamed('body')))
-          .called(1);
+      verify(
+        mockClient.post(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        ),
+      ).called(1);
     });
 
     test('should handle authentication error', () async {
-      when(mockClient.get(any, headers: anyNamed('headers')))
-          .thenAnswer((_) async => http.Response(
-                jsonEncode({'status': false, 'message': 'Unauthorized'}),
-                401,
-              ));
+      when(mockClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+        (_) async => http.Response(
+          jsonEncode({'status': false, 'message': 'Unauthorized'}),
+          401,
+        ),
+      );
 
       expect(
         () => httpClient.get('test-endpoint'),
@@ -261,18 +273,24 @@ void main() {
     });
 
     test('should handle validation error', () async {
-      when(mockClient.post(any,
-              headers: anyNamed('headers'), body: anyNamed('body')))
-          .thenAnswer((_) async => http.Response(
-                jsonEncode(<String, dynamic>{
-                  'status': false,
-                  'message': 'Validation failed',
-                  'errors': <String, dynamic>{
-                    'field': ['error message']
-                  }
-                }),
-                400,
-              ));
+      when(
+        mockClient.post(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        ),
+      ).thenAnswer(
+        (_) async => http.Response(
+          jsonEncode(<String, dynamic>{
+            'status': false,
+            'message': 'Validation failed',
+            'errors': <String, dynamic>{
+              'field': ['error message'],
+            },
+          }),
+          400,
+        ),
+      );
 
       expect(
         () => httpClient.post('test-endpoint', body: <String, dynamic>{}),
@@ -281,12 +299,12 @@ void main() {
     });
 
     test('should handle server error', () async {
-      when(mockClient.get(any, headers: anyNamed('headers')))
-          .thenAnswer((_) async => http.Response(
-                jsonEncode(
-                    {'status': false, 'message': 'Internal server error'}),
-                500,
-              ));
+      when(mockClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+        (_) async => http.Response(
+          jsonEncode({'status': false, 'message': 'Internal server error'}),
+          500,
+        ),
+      );
 
       expect(
         () => httpClient.get('test-endpoint'),
@@ -295,8 +313,9 @@ void main() {
     });
 
     test('should handle network timeout', () async {
-      when(mockClient.get(any, headers: anyNamed('headers')))
-          .thenThrow(const SocketException('Network error'));
+      when(
+        mockClient.get(any, headers: anyNamed('headers')),
+      ).thenThrow(const SocketException('Network error'));
 
       expect(
         () => httpClient.get('test-endpoint'),
@@ -305,21 +324,22 @@ void main() {
     });
 
     test('should include correct headers', () async {
-      when(mockClient.get(any, headers: anyNamed('headers')))
-          .thenAnswer((_) async => http.Response(
-                jsonEncode(<String, dynamic>{
-                  'status': true,
-                  'message': 'Success',
-                  'data': <String, dynamic>{}
-                }),
-                200,
-              ));
+      when(mockClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+        (_) async => http.Response(
+          jsonEncode(<String, dynamic>{
+            'status': true,
+            'message': 'Success',
+            'data': <String, dynamic>{},
+          }),
+          200,
+        ),
+      );
 
       await httpClient.get('test-endpoint');
 
-      final captured =
-          verify(mockClient.get(any, headers: captureAnyNamed('headers')))
-              .captured;
+      final captured = verify(
+        mockClient.get(any, headers: captureAnyNamed('headers')),
+      ).captured;
       final headers = captured.first as Map<String, String>;
 
       expect(headers['Authorization'], 'Bearer test-key');
@@ -348,26 +368,27 @@ void main() {
           'bankAccount': {
             'accountName': 'John Doe',
             'accountNumber': '1234567890',
-            'bank': {'code': '044', 'name': 'Access Bank'}
+            'bank': {'code': '044', 'name': 'Access Bank'},
           },
           'type': 'business',
           'status': 'active',
           'availableBalance': '10000.00',
           'currentBalance': '10000.00',
           'createdAt': '2023-01-01T00:00:00Z',
-          'currency': 'NGN'
-        }
+          'currency': 'NGN',
+        },
       ];
 
-      when(mockClient.get(any, headers: anyNamed('headers')))
-          .thenAnswer((_) async => http.Response(
-                jsonEncode({
-                  'status': true,
-                  'message': 'Success',
-                  'data': accountsJson
-                }),
-                200,
-              ));
+      when(mockClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+        (_) async => http.Response(
+          jsonEncode({
+            'status': true,
+            'message': 'Success',
+            'data': accountsJson,
+          }),
+          200,
+        ),
+      );
 
       final accounts = await accountService.getAccounts();
 
@@ -383,25 +404,26 @@ void main() {
         'bankAccount': {
           'accountName': 'John Doe',
           'accountNumber': '1234567890',
-          'bank': {'code': '044', 'name': 'Access Bank'}
+          'bank': {'code': '044', 'name': 'Access Bank'},
         },
         'type': 'business',
         'status': 'active',
         'availableBalance': '10000.00',
         'currentBalance': '10000.00',
         'createdAt': '2023-01-01T00:00:00Z',
-        'currency': 'NGN'
+        'currency': 'NGN',
       };
 
-      when(mockClient.get(any, headers: anyNamed('headers')))
-          .thenAnswer((_) async => http.Response(
-                jsonEncode({
-                  'status': true,
-                  'message': 'Success',
-                  'data': accountJson
-                }),
-                200,
-              ));
+      when(mockClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+        (_) async => http.Response(
+          jsonEncode({
+            'status': true,
+            'message': 'Success',
+            'data': accountJson,
+          }),
+          200,
+        ),
+      );
 
       final account = await accountService.getAccountById('acc-1');
 
@@ -416,25 +438,26 @@ void main() {
         'bankAccount': {
           'accountName': 'John Doe',
           'accountNumber': '1234567890',
-          'bank': {'code': '044', 'name': 'Access Bank'}
+          'bank': {'code': '044', 'name': 'Access Bank'},
         },
         'type': 'business',
         'status': 'active',
         'availableBalance': '10000.00',
         'currentBalance': '10000.00',
         'createdAt': '2023-01-01T00:00:00Z',
-        'currency': 'NGN'
+        'currency': 'NGN',
       };
 
-      when(mockClient.get(any, headers: anyNamed('headers')))
-          .thenAnswer((_) async => http.Response(
-                jsonEncode({
-                  'status': true,
-                  'message': 'Success',
-                  'data': accountJson
-                }),
-                200,
-              ));
+      when(mockClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+        (_) async => http.Response(
+          jsonEncode({
+            'status': true,
+            'message': 'Success',
+            'data': accountJson,
+          }),
+          200,
+        ),
+      );
 
       final balance = await accountService.getAccountBalance('acc-1');
 
@@ -469,19 +492,20 @@ void main() {
           'createdAt': '2023-01-01T00:00:00Z',
           'completedAt': '2023-01-01T00:01:00Z',
           'recipientName': 'Jane Doe',
-          'recipientAccount': '0987654321'
-        }
+          'recipientAccount': '0987654321',
+        },
       ];
 
-      when(mockClient.get(any, headers: anyNamed('headers')))
-          .thenAnswer((_) async => http.Response(
-                jsonEncode({
-                  'status': true,
-                  'message': 'Success',
-                  'data': transactionsJson
-                }),
-                200,
-              ));
+      when(mockClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+        (_) async => http.Response(
+          jsonEncode({
+            'status': true,
+            'message': 'Success',
+            'data': transactionsJson,
+          }),
+          200,
+        ),
+      );
 
       final transactions = await transactionService.getTransactions(
         accountId: 'acc-1',
@@ -506,18 +530,19 @@ void main() {
         'createdAt': '2023-01-01T00:00:00Z',
         'completedAt': '2023-01-01T00:01:00Z',
         'recipientName': 'Jane Doe',
-        'recipientAccount': '0987654321'
+        'recipientAccount': '0987654321',
       };
 
-      when(mockClient.get(any, headers: anyNamed('headers')))
-          .thenAnswer((_) async => http.Response(
-                jsonEncode({
-                  'status': true,
-                  'message': 'Success',
-                  'data': transactionJson
-                }),
-                200,
-              ));
+      when(mockClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+        (_) async => http.Response(
+          jsonEncode({
+            'status': true,
+            'message': 'Success',
+            'data': transactionJson,
+          }),
+          200,
+        ),
+      );
 
       final transaction = await transactionService.getTransactionById(
         accountId: 'acc-1',
@@ -540,18 +565,19 @@ void main() {
         'createdAt': '2023-01-01T00:00:00Z',
         'completedAt': '2023-01-01T00:01:00Z',
         'recipientName': 'Jane Doe',
-        'recipientAccount': '0987654321'
+        'recipientAccount': '0987654321',
       };
 
-      when(mockClient.get(any, headers: anyNamed('headers')))
-          .thenAnswer((_) async => http.Response(
-                jsonEncode({
-                  'status': true,
-                  'message': 'Success',
-                  'data': transactionJson
-                }),
-                200,
-              ));
+      when(mockClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+        (_) async => http.Response(
+          jsonEncode({
+            'status': true,
+            'message': 'Success',
+            'data': transactionJson,
+          }),
+          200,
+        ),
+      );
 
       final transaction = await transactionService.getTransactionByReference(
         reference: 'REF-1',
@@ -561,15 +587,16 @@ void main() {
     });
 
     test('should download statement successfully', () async {
-      when(mockClient.get(any, headers: anyNamed('headers')))
-          .thenAnswer((_) async => http.Response(
-                jsonEncode({
-                  'status': true,
-                  'message': 'Success',
-                  'data': {'downloadUrl': 'https://example.com/statement.pdf'}
-                }),
-                200,
-              ));
+      when(mockClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+        (_) async => http.Response(
+          jsonEncode({
+            'status': true,
+            'message': 'Success',
+            'data': {'downloadUrl': 'https://example.com/statement.pdf'},
+          }),
+          200,
+        ),
+      );
 
       final downloadUrl = await transactionService.downloadStatement(
         accountId: 'acc-1',
@@ -608,19 +635,25 @@ void main() {
         'reference': 'PAY-REF-1',
         'status': 'pending',
         'amount': '10000',
-        'message': 'Payment initiated successfully'
+        'message': 'Payment initiated successfully',
       };
 
-      when(mockClient.post(any,
-              headers: anyNamed('headers'), body: anyNamed('body')))
-          .thenAnswer((_) async => http.Response(
-                jsonEncode({
-                  'status': true,
-                  'message': 'Success',
-                  'data': paymentResponseJson
-                }),
-                201,
-              ));
+      when(
+        mockClient.post(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        ),
+      ).thenAnswer(
+        (_) async => http.Response(
+          jsonEncode({
+            'status': true,
+            'message': 'Success',
+            'data': paymentResponseJson,
+          }),
+          201,
+        ),
+      );
 
       final response = await paymentService.initiatePayment(paymentRequest);
 
@@ -630,15 +663,16 @@ void main() {
     });
 
     test('should verify account name successfully', () async {
-      when(mockClient.get(any, headers: anyNamed('headers')))
-          .thenAnswer((_) async => http.Response(
-                jsonEncode({
-                  'status': true,
-                  'message': 'Success',
-                  'data': {'accountName': 'John Doe'}
-                }),
-                200,
-              ));
+      when(mockClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+        (_) async => http.Response(
+          jsonEncode({
+            'status': true,
+            'message': 'Success',
+            'data': {'accountName': 'John Doe'},
+          }),
+          200,
+        ),
+      );
 
       final accountName = await paymentService.verifyAccountName(
         accountNumber: '1234567890',
@@ -651,15 +685,15 @@ void main() {
     test('should get banks successfully', () async {
       final banksJson = [
         {'code': '044', 'name': 'Access Bank'},
-        {'code': '058', 'name': 'GTBank'}
+        {'code': '058', 'name': 'GTBank'},
       ];
 
-      when(mockClient.get(any, headers: anyNamed('headers')))
-          .thenAnswer((_) async => http.Response(
-                jsonEncode(
-                    {'status': true, 'message': 'Success', 'data': banksJson}),
-                200,
-              ));
+      when(mockClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+        (_) async => http.Response(
+          jsonEncode({'status': true, 'message': 'Success', 'data': banksJson}),
+          200,
+        ),
+      );
 
       final banks = await paymentService.getBanks();
 
@@ -674,18 +708,19 @@ void main() {
         'reference': 'PAY-REF-1',
         'status': 'completed',
         'amount': '10000',
-        'message': 'Payment completed successfully'
+        'message': 'Payment completed successfully',
       };
 
-      when(mockClient.get(any, headers: anyNamed('headers')))
-          .thenAnswer((_) async => http.Response(
-                jsonEncode({
-                  'status': true,
-                  'message': 'Success',
-                  'data': paymentResponseJson
-                }),
-                200,
-              ));
+      when(mockClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+        (_) async => http.Response(
+          jsonEncode({
+            'status': true,
+            'message': 'Success',
+            'data': paymentResponseJson,
+          }),
+          200,
+        ),
+      );
 
       final response = await paymentService.getPaymentStatus(
         reference: 'PAY-REF-1',
@@ -713,16 +748,22 @@ void main() {
         ),
       ];
 
-      when(mockClient.post(any,
-              headers: anyNamed('headers'), body: anyNamed('body')))
-          .thenAnswer((_) async => http.Response(
-                jsonEncode({
-                  'status': true,
-                  'message': 'Success',
-                  'data': {'batchId': 'batch-123', 'totalAmount': '8000'}
-                }),
-                201,
-              ));
+      when(
+        mockClient.post(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        ),
+      ).thenAnswer(
+        (_) async => http.Response(
+          jsonEncode({
+            'status': true,
+            'message': 'Success',
+            'data': {'batchId': 'batch-123', 'totalAmount': '8000'},
+          }),
+          201,
+        ),
+      );
 
       final result = await paymentService.initiateBulkTransfer(
         accountId: 'acc-1',
@@ -734,15 +775,16 @@ void main() {
     });
 
     test('should get transfer fee successfully', () async {
-      when(mockClient.get(any, headers: anyNamed('headers')))
-          .thenAnswer((_) async => http.Response(
-                jsonEncode({
-                  'status': true,
-                  'message': 'Success',
-                  'data': {'fee': '50.00'}
-                }),
-                200,
-              ));
+      when(mockClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+        (_) async => http.Response(
+          jsonEncode({
+            'status': true,
+            'message': 'Success',
+            'data': {'fee': '50.00'},
+          }),
+          200,
+        ),
+      );
 
       final fee = await paymentService.getTransferFee(
         amount: '10000',
@@ -797,33 +839,40 @@ void main() {
       final client = LencoClient(config: config, httpClient: mockClient);
 
       // Mock account verification
-      when(mockClient.get(any, headers: anyNamed('headers')))
-          .thenAnswer((_) async => http.Response(
-                jsonEncode({
-                  'status': true,
-                  'message': 'Success',
-                  'data': {'accountName': 'John Doe'}
-                }),
-                200,
-              ));
+      when(mockClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+        (_) async => http.Response(
+          jsonEncode({
+            'status': true,
+            'message': 'Success',
+            'data': {'accountName': 'John Doe'},
+          }),
+          200,
+        ),
+      );
 
       // Mock payment initiation
-      when(mockClient.post(any,
-              headers: anyNamed('headers'), body: anyNamed('body')))
-          .thenAnswer((_) async => http.Response(
-                jsonEncode({
-                  'status': true,
-                  'message': 'Success',
-                  'data': {
-                    'id': 'pay-1',
-                    'reference': 'PAY-REF-1',
-                    'status': 'pending',
-                    'amount': '10000',
-                    'message': 'Payment initiated successfully'
-                  }
-                }),
-                201,
-              ));
+      when(
+        mockClient.post(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        ),
+      ).thenAnswer(
+        (_) async => http.Response(
+          jsonEncode({
+            'status': true,
+            'message': 'Success',
+            'data': {
+              'id': 'pay-1',
+              'reference': 'PAY-REF-1',
+              'status': 'pending',
+              'amount': '10000',
+              'message': 'Payment initiated successfully',
+            },
+          }),
+          201,
+        ),
+      );
 
       // Verify account
       final accountName = await client.payments.verifyAccountName(

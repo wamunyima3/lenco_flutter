@@ -32,10 +32,7 @@ class CollectionsService {
       'provider': provider,
     };
 
-    final response = await _client.post(
-      'collections/mobile-money',
-      body: body,
-    );
+    final response = await _client.post('collections/mobile-money', body: body);
 
     final apiResponse = LencoApiResponse<Map<String, dynamic>>.fromJson(
       response,
@@ -62,9 +59,7 @@ class CollectionsService {
     required String collectionId,
     required String otp,
   }) async {
-    final body = {
-      'otp': otp,
-    };
+    final body = {'otp': otp};
 
     final response = await _client.post(
       'collections/mobile-money/submit-otp',
@@ -117,10 +112,7 @@ class CollectionsService {
       if (cardHolderName != null) 'cardHolderName': cardHolderName,
     };
 
-    final response = await _client.post(
-      'collections/card',
-      body: body,
-    );
+    final response = await _client.post('collections/card', body: body);
 
     final apiResponse = LencoApiResponse<Map<String, dynamic>>.fromJson(
       response,
@@ -147,10 +139,7 @@ class CollectionsService {
     int page = 1,
     int limit = 50,
   }) async {
-    final queryParams = {
-      'page': page,
-      'limit': limit,
-    };
+    final queryParams = {'page': page, 'limit': limit};
 
     final response = await _client.get(
       'collections',
@@ -168,7 +157,8 @@ class CollectionsService {
 
     return apiResponse.data!
         .map(
-            (json) => CollectionResponse.fromJson(json as Map<String, dynamic>))
+          (json) => CollectionResponse.fromJson(json as Map<String, dynamic>),
+        )
         .toList();
   }
 

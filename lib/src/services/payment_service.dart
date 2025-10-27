@@ -46,10 +46,7 @@ class PaymentService {
     required String accountNumber,
     required String bankCode,
   }) async {
-    final queryParams = {
-      'accountNumber': accountNumber,
-      'bankCode': bankCode,
-    };
+    final queryParams = {'accountNumber': accountNumber, 'bankCode': bankCode};
 
     final response = await _client.get(
       'payments/verify-account',
@@ -87,12 +84,8 @@ class PaymentService {
   }
 
   /// Check payment status by reference
-  Future<PaymentResponse> getPaymentStatus({
-    required String reference,
-  }) async {
-    final response = await _client.get(
-      'payments/$reference',
-    );
+  Future<PaymentResponse> getPaymentStatus({required String reference}) async {
+    final response = await _client.get('payments/$reference');
 
     final apiResponse = LencoApiResponse<Map<String, dynamic>>.fromJson(
       response,
@@ -116,10 +109,7 @@ class PaymentService {
       'transfers': transfers.map((t) => t.toJson()).toList(),
     };
 
-    final response = await _client.post(
-      'payments/bulk-transfer',
-      body: body,
-    );
+    final response = await _client.post('payments/bulk-transfer', body: body);
 
     final apiResponse = LencoApiResponse<Map<String, dynamic>>.fromJson(
       response,
@@ -138,10 +128,7 @@ class PaymentService {
     required String amount,
     required String bankCode,
   }) async {
-    final queryParams = {
-      'amount': amount,
-      'bankCode': bankCode,
-    };
+    final queryParams = {'amount': amount, 'bankCode': bankCode};
 
     final response = await _client.get(
       'payments/fee',

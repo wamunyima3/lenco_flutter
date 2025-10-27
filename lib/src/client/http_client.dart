@@ -10,17 +10,15 @@ class LencoHttpClient {
   final LencoConfig config;
   final http.Client _client;
 
-  LencoHttpClient({
-    required this.config,
-    http.Client? client,
-  }) : _client = client ?? http.Client();
+  LencoHttpClient({required this.config, http.Client? client})
+    : _client = client ?? http.Client();
 
   /// Get authorization headers
   Map<String, String> get _headers => {
-        'Authorization': 'Bearer ${config.apiKey}',
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      };
+    'Authorization': 'Bearer ${config.apiKey}',
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  };
 
   /// GET request
   Future<Map<String, dynamic>> get(
@@ -101,8 +99,9 @@ class LencoHttpClient {
 
       switch (method) {
         case 'GET':
-          response =
-              await _client.get(uri, headers: _headers).timeout(config.timeout);
+          response = await _client
+              .get(uri, headers: _headers)
+              .timeout(config.timeout);
           break;
         case 'POST':
           response = await _client
@@ -223,10 +222,7 @@ class LencoHttpClient {
           errorCode: errorCode,
         );
       case 429:
-        throw LencoRateLimitException(
-          message: message,
-          statusCode: statusCode,
-        );
+        throw LencoRateLimitException(message: message, statusCode: statusCode);
       case 500:
       case 501:
       case 502:
