@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.1] - 2025-01-31
+
+### Fixed
+
+- **Static analysis issues** - Resolved all pub.dev analysis errors
+  - Included generated files in published package
+  - Updated SDK constraints to ^3.8.0
+  - Updated json_annotation to ^4.9.0
+- **Package publishing** - Package now passes all pub.dev checks
+
 ## [2.0.0] - 2025-01-31
 
 ### Added

@@ -1,6 +1,6 @@
 name: lenco_flutter
 description: A production-ready Flutter package for integrating Lenco payment gateway. Support for accounts, transactions, payments, collections, virtual accounts, and mobile money.
-version: 2.0.0
+version: 2.0.1
 homepage: https://wamunyimamukelabai.vercel.app/
 repository: https://github.com/wamunyima3/lenco_flutter
 issue_tracker: https://github.com/wamunyima3/lenco_flutter/issues
