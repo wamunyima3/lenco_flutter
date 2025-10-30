@@ -9,6 +9,7 @@ class CollectionsService {
   CollectionsService(this._client);
 
   /// Create a collection (accept payment from mobile money)
+  @Deprecated('Use createMobileMoneyCollectionV2 with phone/operator/country')
   ///
   /// Example:
   /// ```dart
@@ -68,10 +69,11 @@ class CollectionsService {
     }
 
     final msisdn = MsisdnUtils.toMsisdn(phone);
+    final normalizedOperator = operator.toLowerCase();
     final body = {
       ...request.toJson(),
       'phone': msisdn,
-      'operator': operator,
+      'operator': normalizedOperator,
       'country': country,
     };
 
@@ -102,12 +104,12 @@ class CollectionsService {
     required String collectionId,
     required String otp,
   }) async {
-    final body = {'otp': otp};
+    // v2: send id and otp in body as per docs
+    final body = {'id': collectionId, 'otp': otp};
 
     final response = await _client.post(
       'collections/mobile-money/submit-otp',
       body: body,
-      queryParameters: {'id': collectionId},
     );
 
     final apiResponse = LencoApiResponse<Map<String, dynamic>>.fromJson(

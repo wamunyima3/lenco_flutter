@@ -343,7 +343,7 @@ class CollectionRequest extends Equatable {
   final String currency;
   final String reference;
   final String? callbackUrl;
-  final String? metadata;
+  final Map<String, dynamic>? metadata;
 
   const CollectionRequest({
     required this.amount,

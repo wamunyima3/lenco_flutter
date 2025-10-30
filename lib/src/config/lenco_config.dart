@@ -31,7 +31,7 @@ class LencoConfig {
 
   factory LencoConfig.sandbox({
     required String apiKey,
-    LencoApiVersion version = LencoApiVersion.v1,
+    LencoApiVersion version = LencoApiVersion.v2,
     bool debugMode = true,
     String? baseUrlOverride,
     void Function(String message)? logger,
@@ -47,7 +47,7 @@ class LencoConfig {
 
   factory LencoConfig.production({
     required String apiKey,
-    LencoApiVersion version = LencoApiVersion.v1,
+    LencoApiVersion version = LencoApiVersion.v2,
     String? baseUrlOverride,
     void Function(String message)? logger,
   }) {

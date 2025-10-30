@@ -7,7 +7,8 @@ class TransactionService {
 
   TransactionService(this._client);
 
-  /// Get transactions with optional filters
+  /// Get transactions with optional filters (v1 account-scoped)
+  @Deprecated('Use getTransactionsV2 (unscoped) per v2 docs')
   Future<List<LencoTransaction>> getTransactions({
     required String accountId,
     int page = 1,
@@ -43,7 +44,8 @@ class TransactionService {
         .toList();
   }
 
-  /// Get transaction by ID
+  /// Get transaction by ID (v1 account-scoped)
+  @Deprecated('Use getTransactionByIdV2 per v2 docs')
   Future<LencoTransaction> getTransactionById({
     required String accountId,
     required String transactionId,
@@ -64,11 +66,62 @@ class TransactionService {
     return LencoTransaction.fromJson(apiResponse.data!);
   }
 
-  /// Get transaction by reference number
+  /// Get transaction by reference number (legacy)
   Future<LencoTransaction> getTransactionByReference({
     required String reference,
   }) async {
     final response = await _client.get('transactions/reference/$reference');
+
+    final apiResponse = LencoApiResponse<Map<String, dynamic>>.fromJson(
+      response,
+      (json) => json as Map<String, dynamic>,
+    );
+
+    if (!apiResponse.status || apiResponse.data == null) {
+      throw Exception(apiResponse.message);
+    }
+
+    return LencoTransaction.fromJson(apiResponse.data!);
+  }
+
+  /// v2: List transactions
+  Future<List<LencoTransaction>> getTransactionsV2({
+    int page = 1,
+    int limit = 50,
+    String? startDate,
+    String? endDate,
+    String? type,
+  }) async {
+    final queryParams = <String, dynamic>{
+      'page': page,
+      'limit': limit,
+      if (startDate != null) 'startDate': startDate,
+      if (endDate != null) 'endDate': endDate,
+      if (type != null) 'type': type,
+    };
+
+    final response = await _client.get(
+      'transactions',
+      queryParameters: queryParams,
+    );
+
+    final apiResponse = LencoApiResponse<List<dynamic>>.fromJson(
+      response,
+      (json) => json as List<dynamic>,
+    );
+
+    if (!apiResponse.status || apiResponse.data == null) {
+      throw Exception(apiResponse.message);
+    }
+
+    return apiResponse.data!
+        .map((json) => LencoTransaction.fromJson(json as Map<String, dynamic>))
+        .toList();
+  }
+
+  /// v2: Get transaction by ID
+  Future<LencoTransaction> getTransactionByIdV2(String id) async {
+    final response = await _client.get('transactions/$id');
 
     final apiResponse = LencoApiResponse<Map<String, dynamic>>.fromJson(
       response,

@@ -16,7 +16,7 @@ void main() {
 
       expect(config.apiKey, 'test-key');
       expect(config.baseUrl, 'https://api.lenco.co');
-      expect(config.version, LencoApiVersion.v1);
+      expect(config.version, LencoApiVersion.v2);
       expect(config.debugMode, false);
     });
 
@@ -30,7 +30,7 @@ void main() {
 
     test('should generate correct versioned base URL', () {
       final config = LencoConfig.production(apiKey: 'test-key');
-      expect(config.versionedBaseUrl, 'https://api.lenco.co/access/v1');
+      expect(config.versionedBaseUrl, 'https://api.lenco.co/access/v2');
 
       final configV2 = LencoConfig.production(
         apiKey: 'test-key',
@@ -432,19 +432,9 @@ void main() {
     });
 
     test('should get account balance successfully', () async {
-      final accountJson = {
-        'id': 'acc-1',
-        'name': 'Account 1',
-        'bankAccount': {
-          'accountName': 'John Doe',
-          'accountNumber': '1234567890',
-          'bank': {'code': '044', 'name': 'Access Bank'},
-        },
-        'type': 'business',
-        'status': 'active',
-        'availableBalance': '10000.00',
-        'currentBalance': '10000.00',
-        'createdAt': '2023-01-01T00:00:00Z',
+      final balanceJson = {
+        'available': '10000.00',
+        'current': '10000.00',
         'currency': 'NGN',
       };
 
@@ -453,7 +443,7 @@ void main() {
           jsonEncode({
             'status': true,
             'message': 'Success',
-            'data': accountJson,
+            'data': balanceJson,
           }),
           200,
         ),

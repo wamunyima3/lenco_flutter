@@ -61,7 +61,7 @@ class LencoClient {
 
   factory LencoClient.production({
     required String apiKey,
-    LencoApiVersion version = LencoApiVersion.v1,
+    LencoApiVersion version = LencoApiVersion.v2,
   }) {
     return LencoClient(
       config: LencoConfig.production(apiKey: apiKey, version: version),
@@ -70,7 +70,7 @@ class LencoClient {
 
   factory LencoClient.sandbox({
     required String apiKey,
-    LencoApiVersion version = LencoApiVersion.v1,
+    LencoApiVersion version = LencoApiVersion.v2,
   }) {
     return LencoClient(
       config: LencoConfig.sandbox(apiKey: apiKey, version: version),

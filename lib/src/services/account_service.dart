@@ -42,12 +42,18 @@ class AccountService {
   }
 
   /// Get balance info for an account
-  Future<Map<String, String>> getAccountBalance(String accountId) async {
-    final account = await getAccountById(accountId);
-    return {
-      'available': account.availableBalance,
-      'current': account.currentBalance,
-      'currency': account.currency,
-    };
+  Future<Map<String, dynamic>> getAccountBalance(String accountId) async {
+    final response = await _client.get('accounts/$accountId/balance');
+
+    final apiResponse = LencoApiResponse<Map<String, dynamic>>.fromJson(
+      response,
+      (json) => json as Map<String, dynamic>,
+    );
+
+    if (!apiResponse.status || apiResponse.data == null) {
+      throw Exception(apiResponse.message);
+    }
+
+    return apiResponse.data!;
   }
 }

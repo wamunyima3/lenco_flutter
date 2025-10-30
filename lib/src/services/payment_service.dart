@@ -1,4 +1,5 @@
 import 'package:lenco_flutter/src/client/http_client.dart';
+import 'package:lenco_flutter/src/utils/msisdn.dart';
 import 'package:lenco_flutter/src/models/api_response.dart';
 
 /// Service for payment-related operations
@@ -47,13 +48,16 @@ class PaymentService {
     String country = 'ZM',
     String? narration,
   }) async {
+    // Normalize per v2: MSISDN digits only, lowercase operator
+    final normalizedPhone = MsisdnUtils.toMsisdn(phone);
+    final normalizedOperator = operator.toLowerCase();
     final body = {
       'accountId': accountId,
       'amount': amount,
       'currency': currency,
       'reference': reference,
-      'phone': phone,
-      'operator': operator,
+      'phone': normalizedPhone,
+      'operator': normalizedOperator,
       'country': country,
       if (narration != null) 'narration': narration,
     };
@@ -209,6 +213,7 @@ class PaymentService {
   ///   ),
   /// );
   /// ```
+  @Deprecated('Use transfers/bank-account (transferToBankAccount) in v2')
   Future<PaymentResponse> initiatePayment(PaymentRequest request) async {
     final response = await _client.post(
       'payments/transfer',
@@ -228,6 +233,7 @@ class PaymentService {
   }
 
   /// Verify account name before transfer
+  @Deprecated('Use resolve/bank-account via ResolveService.bankAccount in v2')
   Future<String> verifyAccountName({
     required String accountNumber,
     required String bankCode,
@@ -270,6 +276,7 @@ class PaymentService {
   }
 
   /// Check payment status by reference
+  @Deprecated('Use transfers/status/:reference in v2 (getTransferStatus)')
   Future<PaymentResponse> getPaymentStatus({required String reference}) async {
     final response = await _client.get('payments/$reference');
 
@@ -286,6 +293,7 @@ class PaymentService {
   }
 
   /// Transfer to multiple recipients at once
+  @Deprecated('Prefer v2 transfers endpoints; bulk payments/* is legacy')
   Future<Map<String, dynamic>> initiateBulkTransfer({
     required String accountId,
     required List<PaymentRequest> transfers,
@@ -310,6 +318,7 @@ class PaymentService {
   }
 
   /// Calculate transfer fee
+  @Deprecated('Fee calculation via payments/fee is legacy; see v2 pricing')
   Future<String> getTransferFee({
     required String amount,
     required String bankCode,

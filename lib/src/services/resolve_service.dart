@@ -1,4 +1,5 @@
 import 'package:lenco_flutter/src/client/http_client.dart';
+import 'package:lenco_flutter/src/utils/msisdn.dart';
 import 'package:lenco_flutter/src/models/api_response.dart';
 
 /// Resolve endpoints (v2)
@@ -31,7 +32,13 @@ class ResolveService {
     required String operator,
     String country = 'ZM',
   }) async {
-    final body = {'phone': phone, 'operator': operator, 'country': country};
+    final normalizedPhone = MsisdnUtils.toMsisdn(phone);
+    final normalizedOperator = operator.toLowerCase();
+    final body = {
+      'phone': normalizedPhone,
+      'operator': normalizedOperator,
+      'country': country,
+    };
 
     final response = await _client.post('resolve/mobile-money', body: body);
     final apiResponse = LencoApiResponse<Map<String, dynamic>>.fromJson(

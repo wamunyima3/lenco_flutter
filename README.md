@@ -267,7 +267,7 @@ try {
 }
 ```
 
-### Accept Payment (Collections) - NEW!
+### Accept Payment (Collections) - v2
 
 Accept payments from cards or mobile money:
 
@@ -294,22 +294,23 @@ try {
 }
 ```
 
-Or accept mobile money:
+Or accept mobile money (v2):
 
 ```dart
 try {
-  final collection = await lenco.collections.createMobileMoneyCollection(
-    CollectionRequest(
+  final collection = await lenco.collections.createMobileMoneyCollectionV2(
+    request: CollectionRequest(
       amount: '10000',
-      currency: 'NGN',
+      currency: 'USD',
       reference: 'ORDER-456',
     ),
-    phoneNumber: '08012345678',
-    provider: 'MTN',
+    phone: '260971234567', // MSISDN (no +)
+    operator: 'mtn',       // 'airtel' | 'mtn' | 'zamtel'
+    country: 'ZM',
   );
 
   // Submit OTP if required
-  final result = await lenco.collections.submitMobileMoneyOtp(
+  final result = await lenco.collections.submitMobileMoneyOtpV2(
     collectionId: collection.id,
     otp: '123456',
   );
@@ -345,7 +346,7 @@ try {
 }
 ```
 
-### Manage Recipients - NEW!
+### Manage Recipients - v2
 
 Save and reuse payment recipients:
 
@@ -508,6 +509,24 @@ final lenco = LencoClient(
   httpClient: mockClient,
 );
 ```
+
+### Test suites
+
+- Unit tests: cover models, utilities, error mapping and service happy-paths.
+- Contract tests (v2): validate request paths and payload shapes against the docs for endpoints such as `collections`, `transfers`, `resolve`, `accounts`, `transactions`, `banks`, `settlements`, `transfer-recipients`, and `encryption-key`. See `test/v2_contract_test.dart`.
+
+### Run tests locally
+
+```bash
+flutter test
+```
+
+### Developer notes
+
+- Use `LencoConfig.sandbox(..., version: LencoApiVersion.v2)` in tests to ensure versioned base path `/access/v2`.
+- MSISDN normalization: pass any Zambia phone format; SDK normalizes to MSISDN (e.g., `+260971234567` -> `260971234567`).
+- Error handling: the HTTP client maps 4xx/5xx to specific exceptions. Assert types rather than messages.
+- Reference: Lenco v2 API docs [link](https://lenco-api.readme.io/v2.0/reference/introduction).
 
 ## API Documentation
 
