@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2025-01-31
+
+### Added
+
+- v2 alignment across SDK: Banks, Resolve, Transfer Recipients, Transfers, Collections
+- Mobile Money v2 create with `phone` (MSISDN), `operator`, `country`
+- MSISDN utils (normalize, E.164, operator detection with warnings)
+- Optional logger hook and baseUrl override (sandbox/production)
+- Encryption service `/encryption-key`
+
+### Changed
+
+- README links now point to official Lenco docs
+- Developer-friendly errors and request/response logging
+
 ## [2.0.2] - 2025-01-31
 
 ### Fixed
