@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.1.0] - 2025-01-31
 
+## [2.2.0] - 2025-10-30
+
+### Added
+
+- Comprehensive v2 contract tests for endpoints per docs (collections, transfers, resolve, accounts, transactions, banks, settlements, recipients, encryption).
+- Negative tests for error mapping (400/401/404/429/5xx) and MSISDN normalization edge cases with logger warnings.
+- GitHub Actions CI workflow running `flutter analyze` and `flutter test` on push/PR to `main`.
+
+### Changed
+
+- Default config/test expectations aligned to API v2 base path (`/access/v2`).
+- README testing section expanded (how to run tests, suites, and v2 notes).
+
+### Notes
+
+- No public API breaking changes; version bump is minor.
+
 ### Added
 
 - v2 alignment across SDK: Banks, Resolve, Transfer Recipients, Transfers, Collections
