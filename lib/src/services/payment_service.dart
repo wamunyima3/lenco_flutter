@@ -7,6 +7,192 @@ class PaymentService {
 
   PaymentService(this._client);
 
+  // ========= v2 Transfers =========
+  Future<PaymentResponse> transferToBankAccount({
+    required String accountId,
+    required String amount,
+    required String currency,
+    required String reference,
+    required String recipientAccountNumber,
+    required String recipientBankCode,
+    String? narration,
+  }) async {
+    final body = {
+      'accountId': accountId,
+      'amount': amount,
+      'currency': currency,
+      'reference': reference,
+      'recipientAccountNumber': recipientAccountNumber,
+      'recipientBankCode': recipientBankCode,
+      if (narration != null) 'narration': narration,
+    };
+    final response = await _client.post('transfers/bank-account', body: body);
+    final apiResponse = LencoApiResponse<Map<String, dynamic>>.fromJson(
+      response,
+      (json) => json as Map<String, dynamic>,
+    );
+    if (!apiResponse.status || apiResponse.data == null) {
+      throw Exception(apiResponse.message);
+    }
+    return PaymentResponse.fromJson(apiResponse.data!);
+  }
+
+  Future<PaymentResponse> transferToMobileMoney({
+    required String accountId,
+    required String amount,
+    required String currency,
+    required String reference,
+    required String phone,
+    required String operator,
+    String country = 'ZM',
+    String? narration,
+  }) async {
+    final body = {
+      'accountId': accountId,
+      'amount': amount,
+      'currency': currency,
+      'reference': reference,
+      'phone': phone,
+      'operator': operator,
+      'country': country,
+      if (narration != null) 'narration': narration,
+    };
+    final response = await _client.post('transfers/mobile-money', body: body);
+    final apiResponse = LencoApiResponse<Map<String, dynamic>>.fromJson(
+      response,
+      (json) => json as Map<String, dynamic>,
+    );
+    if (!apiResponse.status || apiResponse.data == null) {
+      throw Exception(apiResponse.message);
+    }
+    return PaymentResponse.fromJson(apiResponse.data!);
+  }
+
+  Future<PaymentResponse> transferToLencoMoney({
+    required String accountId,
+    required String amount,
+    required String currency,
+    required String reference,
+    required String accountNumber,
+    String? narration,
+  }) async {
+    final body = {
+      'accountId': accountId,
+      'amount': amount,
+      'currency': currency,
+      'reference': reference,
+      'accountNumber': accountNumber,
+      if (narration != null) 'narration': narration,
+    };
+    final response = await _client.post('transfers/lenco-money', body: body);
+    final apiResponse = LencoApiResponse<Map<String, dynamic>>.fromJson(
+      response,
+      (json) => json as Map<String, dynamic>,
+    );
+    if (!apiResponse.status || apiResponse.data == null) {
+      throw Exception(apiResponse.message);
+    }
+    return PaymentResponse.fromJson(apiResponse.data!);
+  }
+
+  Future<PaymentResponse> transferToLencoMerchant({
+    required String accountId,
+    required String amount,
+    required String currency,
+    required String reference,
+    required String merchantId,
+    String? narration,
+  }) async {
+    final body = {
+      'accountId': accountId,
+      'amount': amount,
+      'currency': currency,
+      'reference': reference,
+      'merchantId': merchantId,
+      if (narration != null) 'narration': narration,
+    };
+    final response = await _client.post('transfers/lenco-merchant', body: body);
+    final apiResponse = LencoApiResponse<Map<String, dynamic>>.fromJson(
+      response,
+      (json) => json as Map<String, dynamic>,
+    );
+    if (!apiResponse.status || apiResponse.data == null) {
+      throw Exception(apiResponse.message);
+    }
+    return PaymentResponse.fromJson(apiResponse.data!);
+  }
+
+  Future<PaymentResponse> transferBetweenAccounts({
+    required String accountId,
+    required String amount,
+    required String currency,
+    required String reference,
+    required String toAccountId,
+    String? narration,
+  }) async {
+    final body = {
+      'accountId': accountId,
+      'amount': amount,
+      'currency': currency,
+      'reference': reference,
+      'toAccountId': toAccountId,
+      if (narration != null) 'narration': narration,
+    };
+    final response = await _client.post('transfers/account', body: body);
+    final apiResponse = LencoApiResponse<Map<String, dynamic>>.fromJson(
+      response,
+      (json) => json as Map<String, dynamic>,
+    );
+    if (!apiResponse.status || apiResponse.data == null) {
+      throw Exception(apiResponse.message);
+    }
+    return PaymentResponse.fromJson(apiResponse.data!);
+  }
+
+  Future<List<PaymentResponse>> getTransfers({
+    int page = 1,
+    int limit = 50,
+  }) async {
+    final response = await _client.get(
+      'transfers',
+      queryParameters: {'page': page, 'limit': limit},
+    );
+    final apiResponse = LencoApiResponse<List<dynamic>>.fromJson(
+      response,
+      (json) => json as List<dynamic>,
+    );
+    if (!apiResponse.status || apiResponse.data == null) {
+      throw Exception(apiResponse.message);
+    }
+    return apiResponse.data!
+        .map((e) => PaymentResponse.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<PaymentResponse> getTransferById(String id) async {
+    final response = await _client.get('transfers/$id');
+    final apiResponse = LencoApiResponse<Map<String, dynamic>>.fromJson(
+      response,
+      (json) => json as Map<String, dynamic>,
+    );
+    if (!apiResponse.status || apiResponse.data == null) {
+      throw Exception(apiResponse.message);
+    }
+    return PaymentResponse.fromJson(apiResponse.data!);
+  }
+
+  Future<PaymentResponse> getTransferStatus(String reference) async {
+    final response = await _client.get('transfers/status/$reference');
+    final apiResponse = LencoApiResponse<Map<String, dynamic>>.fromJson(
+      response,
+      (json) => json as Map<String, dynamic>,
+    );
+    if (!apiResponse.status || apiResponse.data == null) {
+      throw Exception(apiResponse.message);
+    }
+    return PaymentResponse.fromJson(apiResponse.data!);
+  }
+
   /// Initiate a bank transfer
   ///
   /// [request] - Payment request details

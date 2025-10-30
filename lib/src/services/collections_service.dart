@@ -62,7 +62,9 @@ class CollectionsService {
     final detected = MsisdnUtils.detectOperator(phone);
     if (detected != null && detected.toLowerCase() != operator.toLowerCase()) {
       // best-effort warning via client's logger if available
-      _client.config.logger?.call('[Lenco] Warning: MSISDN suggests $detected but operator provided is $operator');
+      _client.config.logger?.call(
+        '[Lenco] Warning: MSISDN suggests $detected but operator provided is $operator',
+      );
     }
 
     final msisdn = MsisdnUtils.toMsisdn(phone);

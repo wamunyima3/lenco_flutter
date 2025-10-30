@@ -62,7 +62,8 @@ class MobileMoneyDetails extends Equatable {
 class MobileMoneyCollectionResponse extends Equatable {
   final String id;
   final String reference;
-  final String status; // e.g., 'otp-required', 'pay-offline', 'pending', 'success'
+  final String
+  status; // e.g., 'otp-required', 'pay-offline', 'pending', 'success'
   final String amount;
   final String currency;
   final DateTime createdAt;

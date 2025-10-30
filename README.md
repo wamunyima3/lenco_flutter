@@ -513,7 +513,6 @@ final lenco = LencoClient(
 
 For complete API documentation, visit:
 
-- [Lenco API v1 Documentation](https://lenco-api.readme.io/reference/introduction)
 - [Lenco API v2 Documentation](https://lenco-api.readme.io/v2.0/reference/introduction)
 
 ## Support

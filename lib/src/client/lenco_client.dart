@@ -7,7 +7,10 @@ import 'package:lenco_flutter/src/services/collections_service.dart';
 import 'package:lenco_flutter/src/services/virtual_account_service.dart';
 import 'package:lenco_flutter/src/services/recipient_service.dart';
 import 'package:lenco_flutter/src/services/settlements_service.dart';
+import 'package:lenco_flutter/src/services/banks_service.dart';
+import 'package:lenco_flutter/src/services/encryption_service.dart';
 import 'package:lenco_flutter/src/client/http_client.dart';
+import 'package:lenco_flutter/src/services/resolve_service.dart';
 
 /// Main Lenco API client
 ///
@@ -37,6 +40,9 @@ class LencoClient {
   late final VirtualAccountService virtualAccounts;
   late final RecipientService recipients;
   late final SettlementsService settlements;
+  late final BanksService banks;
+  late final ResolveService resolve;
+  late final EncryptionService encryption;
 
   LencoClient({required this.config, http.Client? httpClient})
     : _httpClient = LencoHttpClient(config: config, client: httpClient) {
@@ -48,6 +54,9 @@ class LencoClient {
     virtualAccounts = VirtualAccountService(_httpClient);
     recipients = RecipientService(_httpClient);
     settlements = SettlementsService(_httpClient);
+    banks = BanksService(_httpClient);
+    resolve = ResolveService(_httpClient);
+    encryption = EncryptionService(_httpClient);
   }
 
   factory LencoClient.production({
