@@ -15,36 +15,48 @@ class LencoConfig {
   /// Enable debug logging
   final bool debugMode;
 
+  /// Optional logger callback for request/response debugging
+  /// If provided, this is used instead of print. Recommended to integrate
+  /// with the host app's logging.
+  final void Function(String message)? logger;
+
   const LencoConfig({
     required this.apiKey,
     this.baseUrl = 'https://api.lenco.co',
     this.version = LencoApiVersion.v1,
     this.timeout = const Duration(seconds: 30),
     this.debugMode = false,
+    this.logger,
   });
 
   factory LencoConfig.sandbox({
     required String apiKey,
     LencoApiVersion version = LencoApiVersion.v1,
     bool debugMode = true,
+    String? baseUrlOverride,
+    void Function(String message)? logger,
   }) {
     return LencoConfig(
       apiKey: apiKey,
-      baseUrl: 'https://sandbox-api.lenco.co',
+      baseUrl: baseUrlOverride ?? 'https://sandbox-api.lenco.co',
       version: version,
       debugMode: debugMode,
+      logger: logger,
     );
   }
 
   factory LencoConfig.production({
     required String apiKey,
     LencoApiVersion version = LencoApiVersion.v1,
+    String? baseUrlOverride,
+    void Function(String message)? logger,
   }) {
     return LencoConfig(
       apiKey: apiKey,
-      baseUrl: 'https://api.lenco.co',
+      baseUrl: baseUrlOverride ?? 'https://api.lenco.co',
       version: version,
       debugMode: false,
+      logger: logger,
     );
   }
 
@@ -65,6 +77,7 @@ class LencoConfig {
     LencoApiVersion? version,
     Duration? timeout,
     bool? debugMode,
+    void Function(String message)? logger,
   }) {
     return LencoConfig(
       apiKey: apiKey ?? this.apiKey,
@@ -72,6 +85,7 @@ class LencoConfig {
       version: version ?? this.version,
       timeout: timeout ?? this.timeout,
       debugMode: debugMode ?? this.debugMode,
+      logger: logger ?? this.logger,
     );
   }
 

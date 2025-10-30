@@ -75,8 +75,12 @@ class LencoHttpClient {
   /// Debug logging helper
   void _debugLog(String message) {
     if (config.debugMode) {
-      // ignore: avoid_print
-      print('[Lenco] $message');
+      if (config.logger != null) {
+        config.logger!.call('[Lenco] $message');
+      } else {
+        // ignore: avoid_print
+        print('[Lenco] $message');
+      }
     }
   }
 

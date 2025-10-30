@@ -32,6 +32,78 @@ class LencoApiResponse<T> extends Equatable {
       _$LencoApiResponseToJson(this, toJsonT);
 }
 
+/// Mobile money operator (Zambia)
+enum MobileMoneyOperator { airtel, mtn, zamtel }
+
+/// Mobile money details in v2 responses
+@JsonSerializable()
+class MobileMoneyDetails extends Equatable {
+  final String country; // e.g., 'ZM'
+  final String operator; // e.g., 'airtel' | 'mtn' | 'zamtel'
+  final String phone; // MSISDN e.g., 2609XXXXXXX
+
+  const MobileMoneyDetails({
+    required this.country,
+    required this.operator,
+    required this.phone,
+  });
+
+  factory MobileMoneyDetails.fromJson(Map<String, dynamic> json) =>
+      _$MobileMoneyDetailsFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MobileMoneyDetailsToJson(this);
+
+  @override
+  List<Object?> get props => [country, operator, phone];
+}
+
+/// Extended Collection response for mobile money (v2)
+@JsonSerializable()
+class MobileMoneyCollectionResponse extends Equatable {
+  final String id;
+  final String reference;
+  final String status; // e.g., 'otp-required', 'pay-offline', 'pending', 'success'
+  final String amount;
+  final String currency;
+  final DateTime createdAt;
+  final bool? otpRequired;
+  final bool? payOffline;
+  final MobileMoneyDetails? mobileMoneyDetails;
+  final Map<String, dynamic>? metadata;
+
+  const MobileMoneyCollectionResponse({
+    required this.id,
+    required this.reference,
+    required this.status,
+    required this.amount,
+    required this.currency,
+    required this.createdAt,
+    this.otpRequired,
+    this.payOffline,
+    this.mobileMoneyDetails,
+    this.metadata,
+  });
+
+  factory MobileMoneyCollectionResponse.fromJson(Map<String, dynamic> json) =>
+      _$MobileMoneyCollectionResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MobileMoneyCollectionResponseToJson(this);
+
+  @override
+  List<Object?> get props => [
+    id,
+    reference,
+    status,
+    amount,
+    currency,
+    createdAt,
+    otpRequired,
+    payOffline,
+    mobileMoneyDetails,
+    metadata,
+  ];
+}
+
 /// Account model
 @JsonSerializable()
 class LencoAccount extends Equatable {

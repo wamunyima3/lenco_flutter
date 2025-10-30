@@ -1,5 +1,6 @@
 import 'package:lenco_flutter/src/client/http_client.dart';
 import 'package:lenco_flutter/src/models/api_response.dart';
+import 'package:lenco_flutter/src/utils/msisdn.dart';
 
 /// Service for payment collections (accepting payments) - API v2
 class CollectionsService {
@@ -30,6 +31,46 @@ class CollectionsService {
       ...request.toJson(),
       'phoneNumber': phoneNumber,
       'provider': provider,
+    };
+
+    final response = await _client.post('collections/mobile-money', body: body);
+
+    final apiResponse = LencoApiResponse<Map<String, dynamic>>.fromJson(
+      response,
+      (json) => json as Map<String, dynamic>,
+    );
+
+    if (!apiResponse.status || apiResponse.data == null) {
+      throw Exception(apiResponse.message);
+    }
+
+    return CollectionResponse.fromJson(apiResponse.data!);
+  }
+
+  /// v2 Mobile Money collection with operator/country/phone (MSISDN) fields
+  ///
+  /// Request body keys (v2): amount, currency, reference, phone, operator, country
+  /// - operator: 'airtel' | 'mtn' | 'zamtel'
+  /// - country: 'ZM'
+  Future<CollectionResponse> createMobileMoneyCollectionV2({
+    required CollectionRequest request,
+    required String phone,
+    required String operator,
+    String country = 'ZM',
+  }) async {
+    // Optional preflight validation/warning (log only)
+    final detected = MsisdnUtils.detectOperator(phone);
+    if (detected != null && detected.toLowerCase() != operator.toLowerCase()) {
+      // best-effort warning via client's logger if available
+      _client.config.logger?.call('[Lenco] Warning: MSISDN suggests $detected but operator provided is $operator');
+    }
+
+    final msisdn = MsisdnUtils.toMsisdn(phone);
+    final body = {
+      ...request.toJson(),
+      'phone': msisdn,
+      'operator': operator,
+      'country': country,
     };
 
     final response = await _client.post('collections/mobile-money', body: body);
@@ -77,6 +118,14 @@ class CollectionsService {
     }
 
     return CollectionResponse.fromJson(apiResponse.data!);
+  }
+
+  /// v2 OTP submission (same endpoint, confirm parity with v2 backend)
+  Future<CollectionResponse> submitMobileMoneyOtpV2({
+    required String collectionId,
+    required String otp,
+  }) async {
+    return submitMobileMoneyOtp(collectionId: collectionId, otp: otp);
   }
 
   /// Create a card collection (accept payment via card)
