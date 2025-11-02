@@ -43,6 +43,10 @@ class _LencoExampleHomeState extends State<LencoExampleHome> {
   final _bankCodeController = TextEditingController();
   final _amountController = TextEditingController();
   final _narrationController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _operatorController = TextEditingController();
+  final _countryController = TextEditingController(text: 'ZM');
+  final _otpController = TextEditingController();
 
   @override
   void initState() {
@@ -59,6 +63,10 @@ class _LencoExampleHomeState extends State<LencoExampleHome> {
     _bankCodeController.dispose();
     _amountController.dispose();
     _narrationController.dispose();
+    _phoneController.dispose();
+    _operatorController.dispose();
+    _countryController.dispose();
+    _otpController.dispose();
     lenco.close();
     super.dispose();
   }
@@ -115,7 +123,6 @@ class _LencoExampleHomeState extends State<LencoExampleHome> {
 
     try {
       final transactionsList = await lenco.transactions.getTransactions(
-        accountId: accounts.first.id,
         limit: 10,
       );
       setState(() {
@@ -142,7 +149,7 @@ class _LencoExampleHomeState extends State<LencoExampleHome> {
     });
 
     try {
-      final banksList = await lenco.payments.getBanks();
+      final banksList = await lenco.banks.getBanks();
       setState(() {
         banks = banksList;
         successMessage = 'Retrieved ${banksList.length} banks';
@@ -173,10 +180,11 @@ class _LencoExampleHomeState extends State<LencoExampleHome> {
     });
 
     try {
-      final accountName = await lenco.payments.verifyAccountName(
+      final result = await lenco.resolve.bankAccount(
         accountNumber: _accountNumberController.text,
         bankCode: _bankCodeController.text,
       );
+      final accountName = result['accountName'] as String? ?? 'Unknown';
       _showSuccess('Account verified: $accountName');
     } on LencoException catch (e) {
       _showError('Failed to verify account: ${e.message}');
@@ -208,17 +216,17 @@ class _LencoExampleHomeState extends State<LencoExampleHome> {
     });
 
     try {
-      final paymentRequest = PaymentRequest(
+      final payment = await lenco.payments.transferToBankAccount(
         accountId: accounts.first.id,
         amount: _amountController.text,
+        currency: 'NGN', // Default currency, adjust as needed
+        reference: 'PAY-${DateTime.now().millisecondsSinceEpoch}',
         recipientAccountNumber: _accountNumberController.text,
         recipientBankCode: _bankCodeController.text,
         narration: _narrationController.text.isNotEmpty
             ? _narrationController.text
             : 'Test payment',
       );
-
-      final payment = await lenco.payments.initiatePayment(paymentRequest);
       _showSuccess(
           'Payment initiated: ${payment.reference} (Status: ${payment.status})');
     } on LencoException catch (e) {
@@ -229,6 +237,108 @@ class _LencoExampleHomeState extends State<LencoExampleHome> {
       setState(() {
         isLoading = false;
       });
+    }
+  }
+
+  Future<void> _collectMobileMoneyV2() async {
+    if (!_isClientInitialized()) return;
+
+    if (_amountController.text.isEmpty ||
+        _phoneController.text.isEmpty ||
+        _operatorController.text.isEmpty) {
+      _showError('Enter amount, phone and operator');
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+
+    try {
+      final req = CollectionRequest(
+        amount: _amountController.text,
+        currency: 'USD',
+        reference: 'ORDER-${DateTime.now().millisecondsSinceEpoch}',
+      );
+      final col = await lenco.collections.createMobileMoneyCollection(
+        request: req,
+        phone: _phoneController.text,
+        operator: _operatorController.text,
+        country:
+            _countryController.text.isNotEmpty ? _countryController.text : 'ZM',
+      );
+      _showSuccess('Collection created: ${col.id} (${col.status})');
+    } on LencoException catch (e) {
+      _showError('Collection failed: ${e.message}');
+    } catch (e) {
+      _showError('Unexpected error: $e');
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> _submitMobileMoneyOtp() async {
+    if (!_isClientInitialized()) return;
+    if (_otpController.text.isEmpty) {
+      _showError('Enter OTP and collection ID');
+      return;
+    }
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+    try {
+      final id = successMessage != null && successMessage!.contains(':')
+          ? successMessage!.split(':').last.trim().split(' ').first
+          : '';
+      if (id.isEmpty) {
+        _showError('No recent collection id found');
+      } else {
+        final res = await lenco.collections.submitMobileMoneyOtp(
+          collectionId: id,
+          otp: _otpController.text,
+        );
+        _showSuccess('OTP submitted. Status: ${res.status}');
+      }
+    } on LencoException catch (e) {
+      _showError('OTP submit failed: ${e.message}');
+    } catch (e) {
+      _showError('Unexpected error: $e');
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> _listSettlements() async {
+    if (!_isClientInitialized()) return;
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+    try {
+      final list = await lenco.settlements.getSettlements(limit: 5);
+      _showSuccess('Settlements: ${list.length}');
+    } on LencoException catch (e) {
+      _showError('Failed to get settlements: ${e.message}');
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> _listRecipients() async {
+    if (!_isClientInitialized()) return;
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+    try {
+      final list = await lenco.recipients.getRecipients();
+      _showSuccess('Recipients: ${list.length}');
+    } on LencoException catch (e) {
+      _showError('Failed to get recipients: ${e.message}');
+    } finally {
+      setState(() => isLoading = false);
     }
   }
 
@@ -328,6 +438,14 @@ class _LencoExampleHomeState extends State<LencoExampleHome> {
                           onPressed: isLoading ? null : _getBanks,
                           child: const Text('Get Banks'),
                         ),
+                        ElevatedButton(
+                          onPressed: isLoading ? null : _listRecipients,
+                          child: const Text('Recipients (v2)'),
+                        ),
+                        ElevatedButton(
+                          onPressed: isLoading ? null : _listSettlements,
+                          child: const Text('Settlements (v2)'),
+                        ),
                       ],
                     ),
                   ],
@@ -388,6 +506,44 @@ class _LencoExampleHomeState extends State<LencoExampleHome> {
                       ),
                     ),
                     const SizedBox(height: 16),
+                    TextField(
+                      controller: _phoneController,
+                      decoration: const InputDecoration(
+                        labelText: 'Phone (MSISDN input accepted)',
+                        hintText: '+260971234567 or 0971234567',
+                        border: OutlineInputBorder(),
+                      ),
+                      keyboardType: TextInputType.phone,
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _operatorController,
+                      decoration: const InputDecoration(
+                        labelText: 'Operator',
+                        hintText: 'mtn | airtel | zamtel',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _countryController,
+                      decoration: const InputDecoration(
+                        labelText: 'Country',
+                        hintText: 'ZM',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _otpController,
+                      decoration: const InputDecoration(
+                        labelText: 'OTP (for mobile money)',
+                        hintText: '123456',
+                        border: OutlineInputBorder(),
+                      ),
+                      keyboardType: TextInputType.number,
+                    ),
+                    const SizedBox(height: 16),
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
@@ -399,6 +555,14 @@ class _LencoExampleHomeState extends State<LencoExampleHome> {
                         ElevatedButton(
                           onPressed: isLoading ? null : _makePayment,
                           child: const Text('Make Payment'),
+                        ),
+                        ElevatedButton(
+                          onPressed: isLoading ? null : _collectMobileMoneyV2,
+                          child: const Text('Collect (Mobile Money v2)'),
+                        ),
+                        ElevatedButton(
+                          onPressed: isLoading ? null : _submitMobileMoneyOtp,
+                          child: const Text('Submit OTP (v2)'),
                         ),
                       ],
                     ),
@@ -479,7 +643,8 @@ class _LencoExampleHomeState extends State<LencoExampleHome> {
                             title: Text(account.name),
                             subtitle: Text(
                                 '${account.bankAccount.accountNumber} - ${account.bankAccount.bank.name}'),
-                            trailing: Text('₦${account.availableBalance}'),
+                            trailing: Text(
+                                '${account.currency} ${account.availableBalance}'),
                             leading: const Icon(Icons.account_balance),
                           )),
                     ],

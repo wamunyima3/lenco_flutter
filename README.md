@@ -29,7 +29,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  lenco_flutter: ^1.0.0
+  lenco_flutter: ^2.2.0
 ```
 
 Then run:
@@ -37,6 +37,8 @@ Then run:
 ```bash
 flutter pub get
 ```
+
+**Platform Support:** Android, iOS, Web (WASM-compatible), Windows, macOS, Linux
 
 ## Usage
 
@@ -60,9 +62,18 @@ final lenco = LencoClient(
   config: LencoConfig(
     apiKey: 'your-api-key',
     baseUrl: 'https://api.lenco.co',
-    version: LencoApiVersion.v1,
+    version: LencoApiVersion.v2, // v2 is the default
     timeout: Duration(seconds: 30),
     debugMode: true,
+    // Retries and interceptors (optional)
+    maxRetries: 2,
+    retryBackoffBase: Duration(milliseconds: 400),
+    onRequest: ({required method, required endpoint, body, queryParameters}) {
+      // e.g., add custom logging/metrics
+    },
+    onResponse: ({required method, required endpoint, required statusCode, required json}) {
+      // e.g., capture latency/metrics
+    },
   ),
 );
 ```
@@ -102,7 +113,6 @@ try {
 ```dart
 try {
   final transactions = await lenco.transactions.getTransactions(
-    accountId: 'account-id',
     page: 1,
     limit: 50,
     type: 'credit', // Filter by type: 'credit' or 'debit'
@@ -121,18 +131,18 @@ try {
 }
 ```
 
-### Verify Account Name
+### Verify Account Name (Bank Resolution)
 
 Always verify account details before making a transfer:
 
 ```dart
 try {
-  final accountName = await lenco.payments.verifyAccountName(
+  final result = await lenco.resolve.bankAccount(
     accountNumber: '1234567890',
     bankCode: '044', // Access Bank
   );
 
-  print('Account Name: $accountName');
+  print('Account Name: ${result['accountName']}');
   // Proceed with transfer if name matches
 } on LencoNotFoundException catch (e) {
   print('Account not found');
@@ -145,7 +155,7 @@ try {
 
 ```dart
 try {
-  final banks = await lenco.payments.getBanks();
+  final banks = await lenco.banks.getBanks();
 
   for (var bank in banks) {
     print('${bank.name} - ${bank.code}');
@@ -159,15 +169,14 @@ try {
 
 ```dart
 try {
-  final payment = await lenco.payments.initiatePayment(
-    PaymentRequest(
-      accountId: 'your-account-id',
-      amount: '10000', // Amount in kobo/minor units
-      recipientAccountNumber: '1234567890',
-      recipientBankCode: '044',
-      narration: 'Payment for services',
-      reference: 'TXN-${DateTime.now().millisecondsSinceEpoch}', // Optional
-    ),
+  final payment = await lenco.payments.transferToBankAccount(
+    accountId: 'your-account-id',
+    amount: '10000', // Amount in minor currency units
+    currency: 'NGN', // Currency code
+    reference: 'TXN-${DateTime.now().millisecondsSinceEpoch}',
+    recipientAccountNumber: '1234567890',
+    recipientBankCode: '044',
+    narration: 'Payment for services', // Optional
   );
 
   print('Payment Reference: ${payment.reference}');
@@ -183,11 +192,11 @@ try {
 }
 ```
 
-### Check Payment Status
+### Check Transfer Status
 
 ```dart
 try {
-  final payment = await lenco.payments.getPaymentStatus(
+  final payment = await lenco.payments.getTransferStatus(
     reference: 'PAY-REF-123',
   );
 
@@ -203,68 +212,39 @@ try {
 }
 ```
 
-### Bulk Transfers
+### Additional Transfer Methods
+
+v2 API supports multiple transfer types:
 
 ```dart
-try {
-  final transfers = [
-    PaymentRequest(
-      accountId: 'account-id',
-      amount: '5000',
-      recipientAccountNumber: '1111111111',
-      recipientBankCode: '044',
-      narration: 'Salary - John',
-    ),
-    PaymentRequest(
-      accountId: 'account-id',
-      amount: '7500',
-      recipientAccountNumber: '2222222222',
-      recipientBankCode: '058',
-      narration: 'Salary - Jane',
-    ),
-  ];
+// Transfer to mobile money
+final payment = await lenco.payments.transferToMobileMoney(
+  accountId: 'account-id',
+  amount: '10000',
+  currency: 'ZMW',
+  reference: 'TXN-123',
+  phone: '260971234567',
+  operator: 'mtn',
+  country: 'ZM',
+);
 
-  final result = await lenco.payments.initiateBulkTransfer(
-    accountId: 'account-id',
-    transfers: transfers,
-  );
+// Transfer to Lenco Money account
+final payment = await lenco.payments.transferToLencoMoney(
+  accountId: 'account-id',
+  amount: '10000',
+  currency: 'NGN',
+  reference: 'TXN-123',
+  accountNumber: '1234567890',
+);
 
-  print('Bulk transfer initiated: $result');
-} on LencoException catch (e) {
-  print('Error: ${e.message}');
-}
-```
-
-### Get Transfer Fee
-
-```dart
-try {
-  final fee = await lenco.payments.getTransferFee(
-    amount: '10000',
-    bankCode: '044',
-  );
-
-  print('Transfer fee: $fee');
-} on LencoException catch (e) {
-  print('Error: ${e.message}');
-}
-```
-
-### Download Statement
-
-```dart
-try {
-  final downloadUrl = await lenco.transactions.downloadStatement(
-    accountId: 'account-id',
-    startDate: '2024-01-01T00:00:00Z',
-    endDate: '2024-12-31T23:59:59Z',
-    format: 'pdf', // Options: 'pdf', 'csv', 'xlsx'
-  );
-
-  print('Download statement from: $downloadUrl');
-} on LencoException catch (e) {
-  print('Error: ${e.message}');
-}
+// Transfer between your accounts
+final payment = await lenco.payments.transferBetweenAccounts(
+  accountId: 'account-id',
+  amount: '10000',
+  currency: 'NGN',
+  reference: 'TXN-123',
+  toAccountId: 'another-account-id',
+);
 ```
 
 ### Accept Payment (Collections) - v2
@@ -294,28 +274,36 @@ try {
 }
 ```
 
-Or accept mobile money (v2):
+Or accept mobile money:
 
 ```dart
 try {
-  final collection = await lenco.collections.createMobileMoneyCollectionV2(
+  final collection = await lenco.collections.createMobileMoneyCollection(
     request: CollectionRequest(
       amount: '10000',
       currency: 'USD',
       reference: 'ORDER-456',
     ),
-    phone: '260971234567', // MSISDN (no +)
+    phone: '260971234567', // MSISDN format (no +), SDK normalizes automatically
     operator: 'mtn',       // 'airtel' | 'mtn' | 'zamtel'
     country: 'ZM',
   );
 
-  // Submit OTP if required
-  final result = await lenco.collections.submitMobileMoneyOtpV2(
-    collectionId: collection.id,
-    otp: '123456',
-  );
+  print('Collection ID: ${collection.id}');
+  print('Status: ${collection.status}');
 
-  print('Payment status: ${result.status}');
+  // Note: API may convert currency to account default (e.g., USD -> ZMW)
+  // This is expected Lenco API behavior
+
+  // Submit OTP if required
+  if (collection.status.toLowerCase().contains('otp')) {
+    final result = await lenco.collections.submitMobileMoneyOtp(
+      collectionId: collection.id,
+      otp: '123456',
+    );
+
+    print('Payment status: ${result.status}');
+  }
 } on LencoException catch (e) {
   print('Error: ${e.message}');
 }
@@ -396,7 +384,7 @@ try {
 
 ## Error Handling
 
-The package includes a comprehensive exception hierarchy:
+The package includes a comprehensive exception hierarchy (see also `docs/error_handling.md`):
 
 ```dart
 try {
@@ -429,19 +417,37 @@ try {
 }
 ```
 
+## Troubleshooting
+
+- Requests timing out: increase `timeout` in `LencoConfig`, ensure connectivity, and consider `maxRetries`.
+- 401 Unauthorized: verify API key and environment (sandbox vs production).
+- 400/422 Validation errors: inspect `LencoValidationException.errors` for field-level feedback.
+- Phone/operator mismatch (mobile money): the SDK normalizes phone to MSISDN and logs a warning if operator likely differs.
+- Sandbox vs production base URL: use `LencoConfig.sandbox` or `production` factory which set correct base URLs.
+
+## Performance
+
+- **Bank list caching**: Results are cached for 1 hour to reduce API calls
+- **HTTP connection pooling**: Single client instance reused across requests
+- **Automatic retries**: Transient failures handled with exponential backoff
+- See [Performance Guide](docs/performance.md) for optimization tips
+
 ## Best Practices
 
 ### 1. Always Verify Account Names
 
 ```dart
 // ✅ Good
-final name = await lenco.payments.verifyAccountName(...);
-if (name == expectedName) {
-  await lenco.payments.initiatePayment(...);
+final result = await lenco.resolve.bankAccount(
+  accountNumber: '1234567890',
+  bankCode: '044',
+);
+if (result['accountName'] == expectedName) {
+  await lenco.payments.transferToBankAccount(...);
 }
 
 // ❌ Bad
-await lenco.payments.initiatePayment(...); // Without verification
+await lenco.payments.transferToBankAccount(...); // Without verification
 ```
 
 ### 2. Use Unique References
@@ -459,7 +465,7 @@ final reference = 'payment-1';
 ```dart
 // ✅ Good - Specific error handling
 try {
-  await lenco.payments.initiatePayment(...);
+  await lenco.payments.transferToBankAccount(...);
 } on LencoValidationException catch (e) {
   // Show field-specific errors to user
 } on LencoNetworkException catch (e) {
@@ -468,7 +474,7 @@ try {
 
 // ❌ Bad - Generic error handling
 try {
-  await lenco.payments.initiatePayment(...);
+  await lenco.payments.transferToBankAccount(...);
 } catch (e) {
   print('Error: $e');
 }
@@ -527,6 +533,15 @@ flutter test
 - MSISDN normalization: pass any Zambia phone format; SDK normalizes to MSISDN (e.g., `+260971234567` -> `260971234567`).
 - Error handling: the HTTP client maps 4xx/5xx to specific exceptions. Assert types rather than messages.
 - Reference: Lenco v2 API docs [link](https://lenco-api.readme.io/v2.0/reference/introduction).
+
+## Security
+
+See [Security Best Practices](docs/security.md) for:
+
+- API key storage recommendations
+- Sensitive data handling
+- Input validation guidelines
+- SSL/TLS configuration
 
 ## API Documentation
 

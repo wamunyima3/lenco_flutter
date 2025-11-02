@@ -5,6 +5,10 @@ class LencoException implements Exception {
   final String? errorCode;
   final dynamic originalError;
   final StackTrace? stackTrace;
+  // Request context
+  final String? method; // GET, POST, ...
+  final String? endpoint; // e.g., accounts/123
+  final String? requestId; // from response headers if available
 
   const LencoException({
     required this.message,
@@ -12,6 +16,9 @@ class LencoException implements Exception {
     this.errorCode,
     this.originalError,
     this.stackTrace,
+    this.method,
+    this.endpoint,
+    this.requestId,
   });
 
   @override
@@ -19,6 +26,9 @@ class LencoException implements Exception {
     final buffer = StringBuffer('LencoException: $message');
     if (statusCode != null) buffer.write(' (Status: $statusCode)');
     if (errorCode != null) buffer.write(' (Code: $errorCode)');
+    if (method != null) buffer.write(' [Method: $method]');
+    if (endpoint != null) buffer.write(' [Endpoint: $endpoint]');
+    if (requestId != null) buffer.write(' [RequestId: $requestId]');
     return buffer.toString();
   }
 }
@@ -29,6 +39,9 @@ class LencoAuthenticationException extends LencoException {
     super.message = 'Authentication failed. Check your API key.',
     super.statusCode = 401,
     super.errorCode,
+    super.method,
+    super.endpoint,
+    super.requestId,
   });
 }
 
@@ -41,6 +54,9 @@ class LencoValidationException extends LencoException {
     super.statusCode = 400,
     super.errorCode,
     this.errors,
+    super.method,
+    super.endpoint,
+    super.requestId,
   });
 
   @override
@@ -59,6 +75,9 @@ class LencoNotFoundException extends LencoException {
     super.message = 'Resource not found.',
     super.statusCode = 404,
     super.errorCode,
+    super.method,
+    super.endpoint,
+    super.requestId,
   });
 }
 
@@ -68,6 +87,9 @@ class LencoServerException extends LencoException {
     super.message = 'Server error occurred. Please try again later.',
     super.statusCode,
     super.errorCode,
+    super.method,
+    super.endpoint,
+    super.requestId,
   });
 }
 
@@ -76,6 +98,9 @@ class LencoNetworkException extends LencoException {
   const LencoNetworkException({
     super.message = 'Network error. Check your connection.',
     super.originalError,
+    super.method,
+    super.endpoint,
+    super.requestId,
   });
 }
 
@@ -84,6 +109,9 @@ class LencoRateLimitException extends LencoException {
   const LencoRateLimitException({
     super.message = 'Rate limit exceeded. Please try again later.',
     super.statusCode = 429,
+    super.method,
+    super.endpoint,
+    super.requestId,
   });
 }
 
@@ -93,5 +121,8 @@ class LencoUnknownException extends LencoException {
     super.message = 'An unknown error occurred.',
     super.originalError,
     super.stackTrace,
+    super.method,
+    super.endpoint,
+    super.requestId,
   });
 }

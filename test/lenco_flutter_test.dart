@@ -5,6 +5,9 @@ import 'package:http/http.dart' as http;
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:lenco_flutter/lenco_flutter.dart';
+import 'package:lenco_flutter/src/services/v2/account_service.dart' as v2;
+import 'package:lenco_flutter/src/services/v2/transaction_service.dart' as v2;
+import 'package:lenco_flutter/src/services/v2/payment_service.dart' as v2;
 
 import 'lenco_flutter_test.mocks.dart';
 
@@ -812,9 +815,10 @@ void main() {
     });
 
     test('should initialize services', () {
-      expect(client.accounts, isA<AccountService>());
-      expect(client.transactions, isA<TransactionService>());
-      expect(client.payments, isA<PaymentService>());
+      // V2 is default, so services are v2
+      expect(client.accounts, isA<v2.AccountServiceV2>());
+      expect(client.transactions, isA<v2.TransactionServiceV2>());
+      expect(client.payments, isA<v2.PaymentServiceV2>());
     });
 
     test('should close client', () {
@@ -864,23 +868,24 @@ void main() {
         ),
       );
 
-      // Verify account
-      final accountName = await client.payments.verifyAccountName(
+      // Verify account (using v2 resolve service)
+      final resolveResult = await client.resolve.bankAccount(
         accountNumber: '1234567890',
         bankCode: '044',
       );
+      final accountName = resolveResult['accountName'] as String? ?? '';
       expect(accountName, 'John Doe');
 
-      // Initiate payment
-      const paymentRequest = PaymentRequest(
+      // Initiate payment (using v2 transfer method)
+      final payment = await client.payments.transferToBankAccount(
         accountId: 'acc-1',
         amount: '10000',
+        currency: 'NGN',
+        reference: 'PAY-REF-1',
         recipientAccountNumber: '1234567890',
         recipientBankCode: '044',
         narration: 'Test payment',
       );
-
-      final payment = await client.payments.initiatePayment(paymentRequest);
       expect(payment.reference, 'PAY-REF-1');
       expect(payment.status, 'pending');
 

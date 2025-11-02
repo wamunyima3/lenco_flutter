@@ -5,37 +5,56 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.1.0] - 2025-01-31
+## [2.3.0] - 2025-11-02
+
+### Changed
+
+- **v2 API as default**: `LencoApiVersion.v2` is now the default version
+- **Client structure**: Primary service properties (e.g., `lenco.accounts`, `lenco.payments`) now use v2 services by default
+- **V1 access**: V1 services are available via `*V1` properties (e.g., `lenco.accountsV1`) for backward compatibility
+- **Model improvements**: Removed misleading default currency values, added proper null handling for API responses
+- **Documentation**: Updated README examples to reflect v2 methods and current SDK state
+
+### Fixed
+
+- Unused import in `CollectionsServiceV2`
+- Print statement replaced with proper logger usage in `AccountServiceV2`
+- Currency field handling: API may convert currencies (e.g., USD to ZMW) - now properly documented
+
+### Notes
+
+- Mobile money collections may show currency conversion in API responses (e.g., USD request returns ZMW)
+- This is expected Lenco API behavior based on account default currency and regional restrictions
 
 ## [2.2.0] - 2025-10-30
 
 ### Added
 
-- Comprehensive v2 contract tests for endpoints per docs (collections, transfers, resolve, accounts, transactions, banks, settlements, recipients, encryption).
-- Negative tests for error mapping (400/401/404/429/5xx) and MSISDN normalization edge cases with logger warnings.
-- GitHub Actions CI workflow running `flutter analyze` and `flutter test` on push/PR to `main`.
+- Clean Architecture layers: domain repositories, v2 data sources, repository implementations
+- HTTP client retries with backoff and request/response interceptors
+- v1-specific models where payloads differ; copyWith/toString for all models
+- v2 services validation, MSISDN normalization, endpoints via constants
+- Docs: architecture overview, error handling guide; README config and troubleshooting
+- Example app: v2 collections (mobile money + OTP), recipients, settlements
+- Tests: MSISDN utils, HTTP retry/interceptor; expanded v2 contract tests
+- **Security**: Log sanitization utilities, security best practices guide
+- **Performance**: Bank list caching (1 hour TTL) to reduce API calls
+- **WASM Support**: Cross-platform exception handling for web/WASM compatibility
+- **Pub.dev Compliance**: Full platform support, conditional imports, comprehensive documentation
 
 ### Changed
 
-- Default config/test expectations aligned to API v2 base path (`/access/v2`).
-- README testing section expanded (how to run tests, suites, and v2 notes).
+- Standardized base URL construction via `LencoConfig.versionedBaseUrl`
+- Pagination consistency across list endpoints
+- **Security**: Added security warnings in API key documentation
+- **Performance**: Implemented simple in-memory cache for frequently accessed data
 
-### Notes
+### Fixed
 
-- No public API breaking changes; version bump is minor.
-
-### Added
-
-- v2 alignment across SDK: Banks, Resolve, Transfer Recipients, Transfers, Collections
-- Mobile Money v2 create with `phone` (MSISDN), `operator`, `country`
-- MSISDN utils (normalize, E.164, operator detection with warnings)
-- Optional logger hook and baseUrl override (sandbox/production)
-- Encryption service `/encryption-key`
-
-### Changed
-
-- README links now point to official Lenco docs
-- Developer-friendly errors and request/response logging
+- Missing `FutureOr` import in `LencoConfig`
+- Virtual accounts service pagination parameters
+- Code formatting across all source files
+- Static analysis errors (only info-level warnings remain)
 
 ## [2.0.2] - 2025-01-31
 

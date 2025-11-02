@@ -39,3 +39,6 @@ test/.test_coverage.dart
 *.g.dart
 *.freezed.dart
 *.mocks.dart
+
+# Integration test (may contain API keys)
+test_integration.dart

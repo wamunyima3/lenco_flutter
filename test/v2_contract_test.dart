@@ -51,12 +51,12 @@ void main() {
           ),
         );
 
-        final req = CollectionRequest(
+        const req = CollectionRequest(
           amount: '100',
           currency: 'USD',
           reference: 'REF',
         );
-        await lenco.collections.createMobileMoneyCollectionV2(
+        await lenco.collections.createMobileMoneyCollection(
           request: req,
           phone: '0971234567',
           operator: 'MTN',
@@ -105,7 +105,7 @@ void main() {
         ),
       );
 
-      await lenco.collections.submitMobileMoneyOtpV2(
+      await lenco.collections.submitMobileMoneyOtp(
         collectionId: 'col-1',
         otp: '123456',
       );
@@ -255,10 +255,10 @@ void main() {
         );
       });
 
-      final list = await lenco.transactions.getTransactionsV2(limit: 1);
+      final list = await lenco.transactions.getTransactions(limit: 1);
       expect(list, isNotEmpty);
 
-      final one = await lenco.transactions.getTransactionByIdV2('tx-1');
+      final one = await lenco.transactions.getTransactionById('tx-1');
       expect(one.id, 'tx-1');
     });
 
@@ -589,7 +589,7 @@ void main() {
           ),
         );
 
-        await c.collections.createMobileMoneyCollectionV2(
+        await c.collections.createMobileMoneyCollection(
           request: const CollectionRequest(
             amount: '1',
             currency: 'USD',

@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:lenco_flutter/src/config/lenco_config.dart';
 import 'package:lenco_flutter/src/exceptions/lenco_exception.dart';
+import 'package:lenco_flutter/src/core/platform_exceptions.dart';
 
 /// HTTP client wrapper for Lenco API
 class LencoHttpClient {
