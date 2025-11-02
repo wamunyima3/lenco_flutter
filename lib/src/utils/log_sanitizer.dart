@@ -43,7 +43,7 @@ class LogSanitizer {
 
   /// Sanitize a log message by replacing API keys and sensitive tokens
   ///
-  /// Replaces patterns like "Bearer <key>" with "Bearer ***"
+  /// Replaces patterns like "Bearer `[key]`" with "Bearer ***"
   static String sanitizeMessage(String message) {
     return message.replaceAllMapped(
       RegExp(r'Bearer\s+[\w-]+', caseSensitive: false),
